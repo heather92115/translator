@@ -28,5 +28,12 @@ To generate updated models and resolvers:
 > go run github.com/99designs/gqlgen generate
 
 Then rebuild the server
-> go build -o server ./cmd/server
+> go build -v -o server ./cmd/server
+
+To build everything:
+>go build -v ./...
+
+
+To run tests:
+>go test -v ./...
 
