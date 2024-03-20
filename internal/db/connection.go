@@ -1,11 +1,13 @@
-package database
+package db
 
 import (
 	"fmt"
+	"github.com/heather92115/translator/internal/mdl"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
+	"log"
 	"net/url"
 	"os" // Import the os package
 	"time"
@@ -37,11 +39,11 @@ func createDatabaseURL() string {
 	return connectionString
 }
 
-// CreatePool initializes the global database connection pool using
-// environment variables. The function configures the database connection pool with
+// CreatePool initializes the global db connection pool using
+// environment variables. The function configures the db connection pool with
 // predefined settings for maximum idle connections, maximum open connections, and the maximum
 // lifetime of a connection. If an error occurs while
-// establishing a connection to the database, including setting up the connection pool,
+// establishing a connection to the db, including setting up the connection pool,
 // CreatePool returns an error.
 func CreatePool() (err error) {
 
@@ -66,13 +68,19 @@ func CreatePool() (err error) {
 	// SetMaxIdleConns sets the maximum number of connections in the idle connection pool.
 	sqlDB.SetMaxIdleConns(10)
 
-	// SetMaxOpenConns sets the maximum number of open connections to the database.
+	// SetMaxOpenConns sets the maximum number of open connections to the db.
 	sqlDB.SetMaxOpenConns(100)
 
 	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
 	err = sqlDB.Ping()
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	err = MigrateTables()
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -85,9 +93,41 @@ func CreatePool() (err error) {
 func GetConnection() (db *gorm.DB, err error) {
 
 	if globalDb == nil {
-		return nil, fmt.Errorf("database not connected")
+		return nil, fmt.Errorf("db not connected")
 	}
 
 	db = globalDb
+	return
+}
+
+func CreateEnumIfNotExists(db *gorm.DB) error {
+	sql := `
+		DO $$
+		BEGIN
+			IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'status_type') THEN
+				CREATE TYPE status_type AS ENUM ('pending', 'in_progress', 'completed');
+			END IF;
+		END$$;
+		`
+	return db.Exec(sql).Error
+}
+
+func MigrateTables() (err error) {
+
+	err = CreateEnumIfNotExists(globalDb)
+	if err != nil {
+		log.Fatalf("Failed to create enum: %v", err)
+	}
+
+	err = globalDb.AutoMigrate(mdl.Fixit{})
+	if err != nil {
+		return err
+	}
+
+	err = globalDb.AutoMigrate(mdl.Audit{})
+	if err != nil {
+		return err
+	}
+
 	return
 }

@@ -1,0 +1,53 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Vocab {
+  id: ID!
+  learning_lang: String!
+  first_lang: String!
+  alternatives: String!
+  skill: String!
+  infinitive: String!
+  pos: String!
+  hint: String!
+  num_learning_words: Int!
+  known_lang_code: String!
+  learning_lang_code: String!
+}
+
+type Query {
+  vocab(id: ID): Vocab
+  vocabs(learning_code: String!, has_first: Boolean!, limit: Int!): [Vocab!]!
+}
+
+input NewVocab {
+  learning_lang: String!
+  first_lang: String!
+  alternatives: String!
+  skill: String!
+  infinitive: String!
+  pos: String!
+  hint: String!
+  num_learning_words: Int!
+  known_lang_code: String!
+  learning_lang_code: String!
+}
+
+input UpdateVocab {
+  id: ID!
+  first_lang: String!
+  alternatives: String!
+  skill: String!
+  infinitive: String!
+  pos: String!
+  hint: String!
+  num_learning_words: Int!
+  known_lang_code: String!
+  learning_lang_code: String!
+}
+
+type Mutation {
+  createVocab(input: NewVocab!): Vocab!
+  updateVocab(input: UpdateVocab!): Vocab!
+}

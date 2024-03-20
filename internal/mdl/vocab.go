@@ -1,8 +1,8 @@
-package database
+package mdl
 
 import (
+	"encoding/json"
 	"fmt"
-	"log"
 	"time"
 )
 
@@ -26,7 +26,7 @@ import (
 // - LearningLangCode: Language code for the learning language.
 //
 // Usage:
-// This struct is primarily used with GORM for querying and manipulating vocabulary data in a PostgreSQL database.
+// This struct is primarily used with GORM for querying and manipulating vocabulary data in a PostgreSQL db.
 // It is annotated with JSON and GORM tags to map it to the `vocab` table and ensure compatibility with the PostgreSQL backend.
 type Vocab struct {
 	ID               int       `json:"id" gorm:"primaryKey;autoIncrement"`
@@ -43,20 +43,46 @@ type Vocab struct {
 	LearningLangCode string    `json:"learning_lang_code" gorm:"default:'es'"`
 }
 
-// FindVocabByID fetches a vocab entry by its primary ID from the database.
-// It returns the found Vocab entry and any error encountered during the lookup.
-func FindVocabByID(id int) (*Vocab, error) {
-
-	db, err := GetConnection()
+// JSON Creates a JSON string from a Vocab object.
+func (o *Vocab) JSON() string {
+	b, err := json.Marshal(o)
 	if err != nil {
-		return nil, fmt.Errorf("cannot find vocab by id %d: %v", id, err)
+		fmt.Printf("Error: %s", err)
+		return ""
 	}
+	return string(b)
+}
 
-	var vocab Vocab
-	result := db.First(&vocab, id) // `First` method adds `WHERE id = ?` to the query
-	if result.Error != nil {
-		log.Printf("Error finding Vocab with ID %d: %v", id, result.Error)
-		return nil, result.Error
+// Clone a Vocab object into a new instance
+func (v *Vocab) Clone() *Vocab {
+	return &Vocab{
+		ID:               v.ID,
+		LearningLang:     v.LearningLang,
+		FirstLang:        v.FirstLang,
+		Created:          v.Created,
+		Alternatives:     v.Alternatives,
+		Skill:            v.Skill,
+		Infinitive:       v.Infinitive,
+		Pos:              v.Pos,
+		Hint:             v.Hint,
+		NumLearningWords: v.NumLearningWords,
+		KnownLangCode:    v.KnownLangCode,
+		LearningLangCode: v.LearningLangCode,
 	}
-	return &vocab, nil
+}
+
+// Compare two Vocab instances for equivalence
+func (v *Vocab) Compare(other *Vocab) bool {
+	return v.ID == other.ID &&
+		v.LearningLang == other.LearningLang &&
+		v.FirstLang == other.FirstLang &&
+		v.Created.Equal(other.Created) &&
+		v.Alternatives == other.Alternatives &&
+		v.Skill == other.Skill &&
+		v.Infinitive == other.Infinitive &&
+		v.Pos == other.Pos &&
+		v.Hint == other.Hint &&
+		v.NumLearningWords == other.NumLearningWords &&
+		v.KnownLangCode == other.KnownLangCode &&
+		v.LearningLangCode == other.LearningLangCode
 }

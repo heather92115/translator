@@ -1,0 +1,4 @@
+#!/bin/zsh
+
+go build -o server ./cmd/server
+./server
