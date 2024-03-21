@@ -90,6 +90,20 @@ func CreatePool() (err error) {
 	return nil
 }
 
+// GetConnection returns a reference to the global database connection.
+// It checks if the global database connection (globalDb) has been established.
+// If not, it returns an error indicating that the database connection is not available.
+//
+// Returns:
+// - db: A pointer to the gorm.DB instance representing the database connection.
+// - err: An error if the global database connection has not been initialized.
+//
+// Example usage:
+// db, err := GetConnection()
+//
+//	if err != nil {
+//	    log.Fatalf("Database connection error: %v", err)
+//	}
 func GetConnection() (db *gorm.DB, err error) {
 
 	if globalDb == nil {
@@ -100,6 +114,29 @@ func GetConnection() (db *gorm.DB, err error) {
 	return
 }
 
+// CreateEnumIfNotExists checks if a custom ENUM type named 'status_type' exists in the PostgreSQL database.
+// If it does not exist, the function creates this ENUM type with predefined values: 'pending', 'in_progress', and 'completed'.
+// This function is useful for initializing or migrating databases to ensure that the necessary ENUM types are available
+// for use in table definitions or elsewhere within the database schema.
+//
+// The function executes a PostgreSQL DO block to conditionally create the ENUM type. This approach avoids errors that
+// would occur from attempting to create a type that already exists, ensuring idempotency in database migrations or setups.
+//
+// Parameters:
+// - db: A pointer to a gorm.DB instance representing an established database connection.
+//
+// Returns:
+//   - An error if the SQL execution fails, otherwise nil if the ENUM type is successfully checked for existence
+//     and created if needed.
+//
+// Example usage:
+//
+//	if err := CreateEnumIfNotExists(db); err != nil {
+//	    log.Fatalf("Failed to create or check ENUM 'status_type': %v", err)
+//	}
+//
+// Note: This function specifically targets PostgreSQL and uses features unique to that RDBMS.
+// It may need adjustments for compatibility with other database systems.
 func CreateEnumIfNotExists(db *gorm.DB) error {
 	sql := `
 		DO $$
@@ -112,6 +149,34 @@ func CreateEnumIfNotExists(db *gorm.DB) error {
 	return db.Exec(sql).Error
 }
 
+// MigrateTables performs the necessary database migrations to ensure that the schema
+// matches the expected structure defined by the internal models. This function is
+// typically called during application initialization to prepare the database for use.
+//
+// The migration process includes the following steps:
+//  1. Ensuring that a custom ENUM type 'status_type' exists in the PostgreSQL database,
+//     creating it if necessary. This ENUM is used by certain table columns.
+//  2. Automatically migrating the database schema to match the structure of the Fixit model.
+//  3. Automatically migrating the database schema to match the structure of the Audit model.
+//
+// Note: This function presumes that the 'vocab' table already exists in the database
+// and that its schema matches the structure defined by the internal models. It does not
+// perform migration for the 'vocab' table. Ensure that any changes to the vocab model
+// are manually reflected in the database or through separate migration scripts.
+//
+// Returns:
+//   - An error if any part of the migration process fails, otherwise nil if all migrations
+//     are successful.
+//
+// Example usage:
+//
+//	if err := MigrateTables(); err != nil {
+//	    log.Fatalf("Database migration failed: %v", err)
+//	}
+//
+// This function utilizes the global database connection (globalDb) to perform migrations.
+// It's important to ensure that this global connection is properly initialized and connected
+// to the target database before calling MigrateTables.
 func MigrateTables() (err error) {
 
 	err = CreateEnumIfNotExists(globalDb)

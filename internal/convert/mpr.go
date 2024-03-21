@@ -28,6 +28,8 @@ func VocabToGql(from *mdl.Vocab) (*model.Vocab, error) {
 	}, nil
 }
 
+// VocabsToGql maps a slice of mdl.Vocab structs to a slice of model.Vocabs struct.
+// This converts internal vocab structs to the graphql schema form.
 func VocabsToGql(from *[]mdl.Vocab) ([]*model.Vocab, error) {
 	if from == nil {
 		return nil, fmt.Errorf("expected a list of vocab records but found nothing")

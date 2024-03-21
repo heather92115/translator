@@ -21,12 +21,12 @@ func (r *mutationResolver) CreateVocab(ctx context.Context, input model.NewVocab
 		return nil, err
 	}
 
-	repo, err := srv.NewVocabService()
+	vocabService, err := srv.NewVocabService()
 	if err != nil {
 		return nil, err
 	}
 
-	err = repo.CreateVocab(incoming)
+	err = vocabService.CreateVocab(incoming)
 	if err != nil {
 		return nil, err
 	}
@@ -46,12 +46,12 @@ func (r *mutationResolver) UpdateVocab(ctx context.Context, input model.UpdateVo
 		return nil, err
 	}
 
-	repo, err := srv.NewVocabService()
+	vocabService, err := srv.NewVocabService()
 	if err != nil {
 		return nil, err
 	}
 
-	updated, err := repo.UpdateVocab(incoming)
+	updated, err := vocabService.UpdateVocab(incoming)
 	if err != nil {
 		return nil, err
 	}
@@ -71,12 +71,12 @@ func (r *queryResolver) Vocab(ctx context.Context, id *string) (*model.Vocab, er
 		return nil, fmt.Errorf("invalid id %s", *id)
 	}
 
-	repo, err := srv.NewVocabService()
+	vocabService, err := srv.NewVocabService()
 	if err != nil {
 		return nil, err
 	}
 
-	interim, err := repo.FindVocabByID(primaryId)
+	interim, err := vocabService.FindVocabByID(primaryId)
 	if err != nil {
 		return nil, err
 	}
@@ -86,12 +86,12 @@ func (r *queryResolver) Vocab(ctx context.Context, id *string) (*model.Vocab, er
 
 // Vocabs is the resolver for the vocabs field.
 func (r *queryResolver) Vocabs(ctx context.Context, learningCode string, hasFirst bool, limit int) ([]*model.Vocab, error) {
-	repo, err := srv.NewVocabService()
+	vocabService, err := srv.NewVocabService()
 	if err != nil {
 		return nil, err
 	}
 
-	list, err := repo.FindVocabs(learningCode, hasFirst, limit)
+	list, err := vocabService.FindVocabs(learningCode, hasFirst, limit)
 	if err != nil {
 		return nil, err
 	}
