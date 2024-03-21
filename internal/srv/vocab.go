@@ -5,13 +5,12 @@ import (
 	"github.com/heather92115/translator/internal/db"
 	"github.com/heather92115/translator/internal/mdl"
 	"regexp"
-	"strings"
-	"unicode/utf8"
 )
 
 // VocabService handles business logic for Vocab entities.
 type VocabService struct {
-	repo db.VocabRepository
+	repo         db.VocabRepository
+	auditService AuditService
 }
 
 // NewVocabService creates a new instance of VocabService.
@@ -22,7 +21,12 @@ func NewVocabService() (*VocabService, error) {
 		return nil, err
 	}
 
-	return &VocabService{repo: repo}, nil
+	auditService, err := NewAuditService()
+	if err != nil {
+		return nil, err
+	}
+
+	return &VocabService{repo: repo, auditService: *auditService}, nil
 }
 
 // FindVocabByID retrieves a single Vocab record by its primary ID.
@@ -49,8 +53,6 @@ func NewVocabService() (*VocabService, error) {
 //	    fmt.Printf("Found vocab: %+v\n", vocab)
 //	}
 func (s *VocabService) FindVocabByID(id int) (*mdl.Vocab, error) {
-
-	fmt.Printf("Looking for vocab with id , %d\n", id)
 	return s.repo.FindVocabByID(id)
 }
 
@@ -108,10 +110,12 @@ func (s *VocabService) CreateVocab(vocab *mdl.Vocab) (err error) {
 
 	existing, _ := s.repo.FindVocabByLearningLang(vocab.LearningLang)
 	if existing != nil {
-		return fmt.Errorf("vocab with learnign lang %s and id %d already exists", vocab.LearningLang, existing.ID)
+		return fmt.Errorf("vocab with learning lang %s and id %d already exists", vocab.LearningLang, existing.ID)
 	}
 
 	err = s.repo.CreateVocab(vocab)
+
+	err = s.auditService.CreateVocabAudit("created vocab", "sys", nil, vocab)
 
 	return
 }
@@ -122,13 +126,15 @@ func (s *VocabService) UpdateVocab(updating *mdl.Vocab) (vocab *mdl.Vocab, err e
 		return
 	}
 
-	vocab, err = s.repo.FindVocabByID(updating.ID)
+	before, err := s.repo.FindVocabByID(updating.ID)
 	if err != nil {
 		return
-	} else if vocab == nil {
-		err = fmt.Errorf("expeted to find existing vocab with id %d", updating.ID)
+	} else if before == nil {
+		err = fmt.Errorf("expected to find existing vocab with id %d", updating.ID)
 		return
 	}
+
+	vocab = before.Clone()
 
 	// Update allowed to change fields
 	vocab.Hint = updating.Hint
@@ -140,6 +146,8 @@ func (s *VocabService) UpdateVocab(updating *mdl.Vocab) (vocab *mdl.Vocab, err e
 	if err != nil {
 		return
 	}
+
+	err = s.auditService.CreateVocabAudit("updated vocab", "sys", before, vocab)
 
 	return
 }
@@ -155,39 +163,8 @@ const (
 )
 
 const (
-	errFmtStrLen      = "%s must not be empty and must be shorter than %d characters"
 	errFmtStrLangCode = "%s must consist of two lowercase letters"
 )
-
-// validateFieldContent checks a string field's content for compliance with specified length and character restrictions.
-// It ensures the field does not exceed a maximum length and does not contain characters that could be used for XSS or injection attacks.
-// This function is intended for basic validation and sanitization of input fields to prevent common security vulnerabilities.
-//
-// Parameters:
-// - fieldValue: The content of the field to validate.
-// - fieldName: The name of the field, used in the error message to identify the field with invalid content.
-// - maxLength: The maximum allowed length of the field content in Unicode code points.
-//
-// Returns:
-//   - An error if the field content exceeds the maxLength or contains restricted characters, specifying the nature of the validation failure.
-//     Returns nil if the field content passes all validation checks.
-//
-// Usage example:
-// err := validateFieldContent(userInput, "username", 50)
-//
-//	if err != nil {
-//	    log.Printf("Validation error: %v", err)
-//	}
-func validateFieldContent(fieldValue, fieldName string, maxLength int) error {
-	if utf8.RuneCountInString(fieldValue) > maxLength {
-		return fmt.Errorf(errFmtStrLen, fieldName, maxLength)
-	}
-	// Example basic check against common XSS/injection patterns. Expand as necessary.
-	if strings.ContainsAny(fieldValue, "<>\"/") {
-		return fmt.Errorf("%s contains invalid characters", fieldName)
-	}
-	return nil
-}
 
 // validateVocab checks the validity of a Vocab struct's fields against defined constraints.
 // It ensures that string fields do not exceed their maximum lengths and do not contain characters

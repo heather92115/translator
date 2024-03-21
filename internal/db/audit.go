@@ -18,7 +18,7 @@ import (
 // AuditRepository defines the operations available for a Audit entity.
 type AuditRepository interface {
 	FindAuditByID(id int) (*mdl.Audit, error)
-	FindAudits(tableName string, duration mdl.Duration, limit int) (*[]mdl.Audit, error)
+	FindAudits(tableName string, duration *mdl.Duration, limit int) (audits *[]mdl.Audit, err error)
 	CreateAudit(Audit *mdl.Audit) error
 }
 
@@ -64,14 +64,14 @@ func NewSqlAuditRepository() (repo *SQLAuditRepository, err error) {
 //	} else {
 //		log.Printf("Retrieved Audit: %+v\n", Audit)
 //	}
-func (repo *SQLAuditRepository) FindAuditByID(id int) (Audit *mdl.Audit, err error) {
+func (repo *SQLAuditRepository) FindAuditByID(id int) (audit *mdl.Audit, err error) {
 
 	db, err := GetConnection()
 	if err != nil {
 		return
 	}
 
-	result := db.First(&Audit, id) // `First` method adds `WHERE id = ?` to the query
+	result := db.First(&audit, id) // `First` method adds `WHERE id = ?` to the query
 	if result.Error != nil {
 		err = fmt.Errorf("error finding Audit with id %d: %v", id, result.Error)
 	}
@@ -79,13 +79,43 @@ func (repo *SQLAuditRepository) FindAuditByID(id int) (Audit *mdl.Audit, err err
 	return
 }
 
-func (repo *SQLAuditRepository) FindAudits(tableName string, duration *mdl.Duration, limit int) (Audits *[]mdl.Audit, err error) {
+// FindAudits retrieves a list of Audit records filtered by the specified criteria.
+// It allows filtering by table name and a time duration, and limits the number of
+// returned records. This method is useful for fetching audit logs for specific
+// database tables within a certain time frame.
+//
+// Parameters:
+//   - tableName: The name of the database table for which to retrieve audit records.
+//     If an empty string is provided, audit records for all tables are considered.
+//   - duration: A pointer to a mdl.Duration struct specifying the start and end time
+//     for the time range filter. If nil, no time-based filtering is applied.
+//   - limit: The maximum number of audit records to retrieve.
+//
+// Returns:
+//   - A pointer to a slice of mdl.Audit structs containing the retrieved audit records.
+//     Returns nil if an error occurs during query execution.
+//   - An error if there is an issue establishing a database connection, executing
+//     the query, or applying the specified filters. Returns nil if the query is
+//     successful.
+//
+// Example usage:
+// audits, err := repo.FindAudits("users", &mdl.Duration{Start: startTime, End: endTime}, 10)
+//
+//	if err != nil {
+//	    log.Printf("Failed to find audits: %v", err)
+//	} else {
+//
+//	    for _, audit := range *audits {
+//	        fmt.Println(audit)
+//	    }
+//	}
+func (repo *SQLAuditRepository) FindAudits(tableName string, duration *mdl.Duration, limit int) (audits *[]mdl.Audit, err error) {
 	db, err := GetConnection()
 	if err != nil {
 		return
 	}
 
-	Audits = &[]mdl.Audit{}
+	audits = &[]mdl.Audit{}
 
 	query := db.Limit(limit)
 
@@ -99,7 +129,7 @@ func (repo *SQLAuditRepository) FindAudits(tableName string, duration *mdl.Durat
 	}
 
 	// Execute the query
-	err = query.Find(Audits).Error
+	err = query.Find(audits).Error
 	if err != nil {
 		log.Printf("Error finding %d Audit records with tableName '%s': %v", limit, tableName, err)
 	}
@@ -110,13 +140,13 @@ func (repo *SQLAuditRepository) FindAudits(tableName string, duration *mdl.Durat
 // CreateAudit inserts a new Audit record into the database.
 // It establishes a database connection, then attempts to insert the provided Audit instance.
 // Returns an error if the database connection fails or if the insert operation encounters an error.
-func (repo *SQLAuditRepository) CreateAudit(Audit *mdl.Audit) error {
+func (repo *SQLAuditRepository) CreateAudit(audit *mdl.Audit) error {
 	db, err := GetConnection()
 	if err != nil {
 		return fmt.Errorf("failed to connect to the db, error: %v", err)
 	}
 
-	result := db.Create(Audit)
+	result := db.Create(audit)
 	if result.Error != nil {
 		return result.Error
 	}
