@@ -58,3 +58,21 @@ func (o *Fixit) JSON() string {
 	}
 	return string(b)
 }
+
+// Clone creates a deep copy of the Fixit object and returns a new instance containing the same data.
+// This method is useful for creating distinct instances of Fixit objects when copying is needed
+// to prevent modifications to the original object from affecting the copied one.
+//
+// Returns:
+// - A pointer to a new Fixit instance that is a clone of the original.
+func (f *Fixit) Clone() *Fixit {
+	return &Fixit{
+		ID:        f.ID,
+		VocabID:   f.VocabID,
+		Status:    f.Status,
+		FieldName: f.FieldName,
+		Comments:  f.Comments,
+		CreatedBy: f.CreatedBy,
+		Created:   f.Created,
+	}
+}

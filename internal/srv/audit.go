@@ -108,11 +108,6 @@ func (s *AuditService) FindAudits(tableName string, duration *mdl.Duration, limi
 //     the IDs of the 'before' and 'after' states, or if there is an error creating the audit record
 //     in the repository. Returns nil if the audit record is successfully created.
 //
-// This function handles the serialization of the 'before' and 'after' Vocab states to JSON for
-// logging purposes and calculates the diff between these states if both are provided. The diff,
-// along with the comments, the ID of the modified entry, and the creator's identifier, are stored
-// in an Audit struct and persisted to the repository.
-//
 // Example usage:
 // err := auditService.CreateVocabAudit("Updated definition", "admin_user", beforeVocab, afterVocab)
 //
@@ -121,13 +116,8 @@ func (s *AuditService) FindAudits(tableName string, duration *mdl.Duration, limi
 //	}
 func (s *AuditService) CreateVocabAudit(comments string, createdBy string, before *mdl.Vocab, after *mdl.Vocab) (err error) {
 
-	// validate the comments
-	if err = validateFieldContent(comments, "comments", 1000); err != nil {
-		return err
-	}
-
 	if after == nil {
-		err = fmt.Errorf("after value is required")
+		err = fmt.Errorf("after value for vocab is required")
 		return
 	}
 
@@ -136,17 +126,99 @@ func (s *AuditService) CreateVocabAudit(comments string, createdBy string, befor
 		return
 	}
 	afterJson := after.JSON()
-	diff := ""
 
 	beforeJson := ""
 	if before != nil {
 		beforeJson = before.JSON()
+	}
+
+	err = s.CreateAudit("vocab", after.ID, comments, createdBy, beforeJson, afterJson)
+	return
+}
+
+// CreateFixitAudit records a fixit trail for vocabulary modifications. This function
+// is called after creating or updating a vocabulary entry to log the changes made.
+// It validates the length of the comments, checks the integrity of the before and after
+// states of the vocab entry, and then creates a fixit record with the provided information.
+//
+// Parameters:
+//   - comments: A string containing comments about the changes made. This field is validated
+//     to ensure it does not exceed 1000 characters.
+//   - createdBy: The identifier of the user or system that made the changes. This could be a user
+//     ID or a system name.
+//   - before: A pointer to a Vocab struct representing the state of the vocabulary entry before
+//     the changes. This parameter can be nil if the fixit is for a newly created entry.
+//   - after: A pointer to a Vocab struct representing the state of the vocabulary entry after
+//     the changes. This parameter must not be nil.
+//
+// Returns:
+//   - An error if validation fails, if the 'after' parameter is nil, if there is a mismatch between
+//     the IDs of the 'before' and 'after' states, or if there is an error creating the fixit record
+//     in the repository. Returns nil if the fixit record is successfully created.
+//
+// Example usage:
+// err := fixitService.CreateVocabFixit("Updated definition", "admin_user", beforeVocab, afterVocab)
+//
+//	if err != nil {
+//	    log.Printf("Failed to create vocab fixit: %v", err)
+//	}
+func (s *AuditService) CreateFixitAudit(comments string, createdBy string, before *mdl.Fixit, after *mdl.Fixit) (err error) {
+
+	if after == nil {
+		err = fmt.Errorf("after value for fixit is required")
+		return
+	}
+	if before != nil && before.ID != after.ID {
+		err = fmt.Errorf("fixit before id %d and after id %d mismatch", before.ID, after.ID)
+		return
+	}
+	afterJson := after.JSON()
+
+	beforeJson := ""
+	if before != nil {
+		beforeJson = before.JSON()
+	}
+
+	err = s.CreateAudit("fixit", after.ID, comments, createdBy, beforeJson, afterJson)
+	return
+}
+
+// CreateAudit logs a new audit record for a given database table. It validates the comment length,
+// computes the difference between before and after states if provided, and stores the audit record.
+// This function is crucial for tracking changes and operations performed on database entities,
+// providing accountability and traceability for modifications.
+//
+// Parameters:
+// - tableName: The name of the database table associated with the audit.
+// - objectId: The ID of the object being audited within the specified table.
+// - comments: A descriptive message about the change or operation being audited.
+// - createdBy: The identifier for the user or system responsible for the change.
+// - beforeJson: A JSON representation of the object's state before the change. Can be empty.
+// - afterJson: A JSON representation of the object's state after the change.
+//
+// Returns:
+//   - An error if the comment validation fails or if there's an issue creating the audit record.
+//     Returns nil if the audit record is successfully created.
+//
+// The function ensures that the 'comments' field does not exceed 1000 characters and utilizes
+// CompareJSON to generate a 'diff' field if 'beforeJson' is provided, encapsulating the changes
+// made to the audited object. The new audit entry is then persisted through the repository layer.
+func (s *AuditService) CreateAudit(tableName string, objectId int, comments string, createdBy string, beforeJson string, afterJson string) (err error) {
+
+	// validate the comments
+	if err = validateFieldContent(comments, "comments", 1000); err != nil {
+		return err
+	}
+
+	diff := ""
+
+	if len(beforeJson) > 0 {
 		diff = CompareJSON(beforeJson, afterJson)
 	}
 
 	audit := mdl.Audit{
-		TableName: "vocab",
-		ObjectID:  after.ID,
+		TableName: tableName,
+		ObjectID:  objectId,
 		Comments:  comments,
 		Before:    beforeJson,
 		After:     afterJson,

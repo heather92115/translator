@@ -1,13 +1,13 @@
 package mock
 
 import (
-	"errors"
 	"fmt"
 	"github.com/heather92115/translator/internal/mdl"
 )
 
 type MockVocabRepository struct {
 	vocabs map[int]*mdl.Vocab
+	seq    int
 }
 
 // NewMockVocabRepository initializes and returns a new instance of MockVocabRepository.
@@ -49,9 +49,8 @@ func (m *MockVocabRepository) FindVocabs(learningCode string, hasFirst bool, lim
 }
 
 func (m *MockVocabRepository) CreateVocab(vocab *mdl.Vocab) error {
-	if _, exists := m.vocabs[vocab.ID]; exists {
-		return errors.New("vocab already exists")
-	}
+	m.seq += 1
+	vocab.ID = m.seq
 	m.vocabs[vocab.ID] = vocab
 	return nil
 }

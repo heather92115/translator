@@ -119,7 +119,6 @@ func (repo *SQLAuditRepository) FindAudits(tableName string, duration *mdl.Durat
 
 	query := db.Limit(limit)
 
-	// Filter by LearningLangCode
 	if len(tableName) > 0 {
 		query = query.Where("table_name = ?", tableName)
 	}
