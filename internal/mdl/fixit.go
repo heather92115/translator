@@ -46,7 +46,7 @@ type Fixit struct {
 	FieldName string     `json:"field_name" gorm:"default:''"`
 	Comments  string     `gorm:"default:''"`
 	CreatedBy string     `json:"created_by" gorm:"not null"`
-	Created   time.Time  `json:"created" gorm:"not null;default:now()"`
+	Created   time.Time  `json:"created" gorm:"index:idx_fixit_created,not null;default:now()"`
 }
 
 // JSON Creates a JSON string from a Fixit object.
