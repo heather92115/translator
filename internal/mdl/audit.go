@@ -24,12 +24,12 @@ import (
 // review of changes for accountability and possibly restoration of previous states.
 type Audit struct {
 	ID        int       `json:"id" gorm:"primaryKey;autoIncrement"`
-	ObjectID  int       `json:"object_id" gorm:"not null"`
+	ObjectID  int       `json:"object_id" gorm:"index:idx_audit_obj_id,not null"`
 	TableName string    `json:"table_name" gorm:"not null"`
 	Diff      string    `json:"diff"`   // Serialized representation of the differences
 	Before    string    `json:"before"` // State before the changes
 	After     string    `json:"after"`  // State after the changes
 	Comments  string    `gorm:"default:''"`
 	CreatedBy string    `json:"created_by" gorm:"not null"`
-	Created   time.Time `json:"created" gorm:"not null;default:now()"`
+	Created   time.Time `json:"created" gorm:"index:idx_audit_created,not null;default:now()"`
 }
