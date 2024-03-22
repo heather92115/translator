@@ -24,11 +24,11 @@ func (m *MockAuditRepository) FindAuditByID(id int) (*mdl.Audit, error) {
 	return nil, errors.New("audit not found")
 }
 
-func (m *MockAuditRepository) FindAudits(tableName string, duration *mdl.Duration, limit int) (*[]mdl.Audit, error) {
+func (m *MockAuditRepository) FindAudits(tableName string, objectId int, duration *mdl.Duration, limit int) (*[]mdl.Audit, error) {
 	result := make([]mdl.Audit, 0)
 	count := 0
 	for _, a := range m.audits {
-		if (tableName == "" || a.TableName == tableName) &&
+		if (tableName == "" || a.TableName == tableName) && (objectId == 0 || a.ObjectID == objectId) &&
 			(duration == nil || (a.Created.After(duration.Start) && a.Created.Before(duration.End))) {
 			result = append(result, *a)
 			count++
