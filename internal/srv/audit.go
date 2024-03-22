@@ -61,7 +61,10 @@ func (s *AuditService) FindAuditByID(id int) (*mdl.Audit, error) {
 // Parameters:
 //   - tableName: The name of the database table for which to retrieve audit records.
 //     If an empty string is provided, audit records for all tables are considered.
-//   - duration: A pointer to an mdl.Duration struct specifying the start and end time
+//   - objectId: Primary key used to narrow results to just changes to a single record.
+//     Must be used in conjunction with the table name filter.
+//     If a zero value is provided, audit records for all tables are considered.
+//   - duration: A pointer to a mdl.Duration struct specifying the start and end time
 //     for the time range filter. If nil, no time-based filtering is applied.
 //   - limit: The maximum number of audit records to retrieve. A limit of 0 indicates
 //     no limit, thus all matching records are returned.
@@ -74,7 +77,7 @@ func (s *AuditService) FindAuditByID(id int) (*mdl.Audit, error) {
 //     successful without errors.
 //
 // Example usage:
-// audits, err := auditService.FindAudits("users", &mdl.Duration{Start: startTime, End: endTime}, 10)
+// audits, err := auditService.FindAudits("users", 0, &mdl.Duration{Start: startTime, End: endTime}, 10)
 //
 //	if err != nil {
 //	    log.Printf("Error retrieving audits: %v", err)
@@ -84,8 +87,8 @@ func (s *AuditService) FindAuditByID(id int) (*mdl.Audit, error) {
 //	        fmt.Printf("Audit ID: %d, Table: %s\n", audit.ID, audit.TableName)
 //	    }
 //	}
-func (s *AuditService) FindAudits(tableName string, duration *mdl.Duration, limit int) (Audits *[]mdl.Audit, err error) {
-	return s.repo.FindAudits(tableName, duration, limit)
+func (s *AuditService) FindAudits(tableName string, objectId int, duration *mdl.Duration, limit int) (Audits *[]mdl.Audit, err error) {
+	return s.repo.FindAudits(tableName, objectId, duration, limit)
 }
 
 // CreateVocabAudit records an audit trail for vocabulary modifications. This function

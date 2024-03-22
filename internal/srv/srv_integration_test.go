@@ -161,7 +161,7 @@ func TestIntegrationVocabService_CreateFindUpdate(t *testing.T) {
 		Start: twoSecondsAgo,
 		End:   currentTime,
 	}
-	auditList, err := auditService.FindAudits("vocab", &duration, math.MaxInt)
+	auditList, err := auditService.FindAudits("vocab", 0, &duration, math.MaxInt)
 	if err != nil {
 		t.Errorf("Unexpected error on audit query: %v", err)
 		return
@@ -178,6 +178,21 @@ func TestIntegrationVocabService_CreateFindUpdate(t *testing.T) {
 	}
 	if !found {
 		t.Errorf("Expected to find audit with object id %d, but did not", testVocab.ID)
+	}
+
+	// Find the audit directly with table name and object id
+	auditList, err = auditService.FindAudits("vocab", testVocab.ID, &duration, math.MaxInt)
+	if err != nil {
+		t.Errorf("Unexpected error on audit query: %v", err)
+		return
+	} else if len(*auditList) == 0 {
+		t.Errorf("Expected to find at least one audit record for vocab with id %d", testVocab.ID)
+	}
+
+	for _, audit := range *auditList {
+		if audit.ObjectID != testVocab.ID {
+			t.Errorf("Expected to find only audit with object id %d, but found ID %d:%d", testVocab.ID, audit.ID, audit.ObjectID)
+		}
 	}
 
 	vocabList, err := vocabService.FindVocabs("es", true, 5)

@@ -15,10 +15,10 @@ import (
 	"log"
 )
 
-// AuditRepository defines the operations available for a Audit entity.
+// AuditRepository defines the operations available for an Audit entity.
 type AuditRepository interface {
 	FindAuditByID(id int) (*mdl.Audit, error)
-	FindAudits(tableName string, duration *mdl.Duration, limit int) (audits *[]mdl.Audit, err error)
+	FindAudits(tableName string, objectId int, duration *mdl.Duration, limit int) (audits *[]mdl.Audit, err error)
 	CreateAudit(Audit *mdl.Audit) error
 }
 
@@ -49,7 +49,7 @@ func NewSqlAuditRepository() (repo *SQLAuditRepository, err error) {
 // - id: An integer representing the primary ID of the Audit record to retrieve.
 //
 // Returns:
-//   - *mdl.Audit: A pointer to a Audit struct representing the found record. If no record is found
+//   - *mdl.Audit: A pointer to an Audit struct representing the found record. If no record is found
 //     or in case of an error, nil is returned.
 //   - error: An error object detailing any issues encountered during the database connection
 //     attempt or query execution. Errors could include connection failures, issues executing
@@ -87,6 +87,9 @@ func (repo *SQLAuditRepository) FindAuditByID(id int) (audit *mdl.Audit, err err
 // Parameters:
 //   - tableName: The name of the database table for which to retrieve audit records.
 //     If an empty string is provided, audit records for all tables are considered.
+//   - objectId: Primary key used to narrow results to just changes to a single record.
+//     Must be used in conjunction with the table name filter.
+//     If a zero value is provided, audit records for all tables are considered.
 //   - duration: A pointer to a mdl.Duration struct specifying the start and end time
 //     for the time range filter. If nil, no time-based filtering is applied.
 //   - limit: The maximum number of audit records to retrieve.
@@ -109,7 +112,7 @@ func (repo *SQLAuditRepository) FindAuditByID(id int) (audit *mdl.Audit, err err
 //	        fmt.Println(audit)
 //	    }
 //	}
-func (repo *SQLAuditRepository) FindAudits(tableName string, duration *mdl.Duration, limit int) (audits *[]mdl.Audit, err error) {
+func (repo *SQLAuditRepository) FindAudits(tableName string, objectId int, duration *mdl.Duration, limit int) (audits *[]mdl.Audit, err error) {
 	db, err := GetConnection()
 	if err != nil {
 		return
@@ -121,6 +124,12 @@ func (repo *SQLAuditRepository) FindAudits(tableName string, duration *mdl.Durat
 
 	if len(tableName) > 0 {
 		query = query.Where("table_name = ?", tableName)
+
+		if objectId > 0 {
+			query = query.Where("object_id = ?", objectId)
+		}
+	} else if objectId > 0 {
+		return nil, fmt.Errorf("invalid audit query, objectId requires table name filter")
 	}
 
 	if duration != nil {

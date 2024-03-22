@@ -137,7 +137,7 @@ func TestAuditService_FindAudits(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			duration := &mdl.Duration{Start: time.Now().Add(-24 * time.Hour), End: time.Now()}
-			audits, err := service.FindAudits(tt.tableName, duration, 10)
+			audits, err := service.FindAudits(tt.tableName, 0, duration, 10)
 			if err != nil {
 				t.Errorf("Unexpected error: %v", err)
 			}
