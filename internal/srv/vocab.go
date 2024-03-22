@@ -108,8 +108,8 @@ func (s *VocabService) CreateVocab(vocab *mdl.Vocab) (err error) {
 		return
 	}
 
-	existing, _ := s.repo.FindVocabByLearningLang(vocab.LearningLang)
-	if existing != nil {
+	existing, err := s.repo.FindVocabByLearningLang(vocab.LearningLang)
+	if err == nil && existing != nil {
 		return fmt.Errorf("vocab with learning lang %s and id %d already exists", vocab.LearningLang, existing.ID)
 	}
 
@@ -160,10 +160,7 @@ const (
 	maxInfinitiveLen   = 40
 	maxPosLen          = 40
 	maxHintLen         = 255
-)
-
-const (
-	errFmtStrLangCode = "%s must consist of two lowercase letters"
+	errFmtStrLangCode  = "%s must consist of two lowercase letters"
 )
 
 // validateVocab checks the validity of a Vocab struct's fields against defined constraints.
@@ -186,7 +183,9 @@ const (
 //	    log.Printf("Validation failed: %v", err)
 //	}
 func validateVocab(vocab *mdl.Vocab) error {
+
 	if err := validateFieldContent(vocab.LearningLang, "Learning language", maxLearningLangLen); err != nil {
+
 		return err
 	} else if len(vocab.LearningLang) == 0 {
 		return fmt.Errorf("learning lang field is required")

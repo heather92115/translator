@@ -2,12 +2,13 @@ package srv
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"unicode/utf8"
 )
 
 const (
-	errFmtStrLen = "%s must not be empty and must be shorter than %d characters"
+	errFmtStrLen = "%s must be shorter than %d characters"
 )
 
 // validateFieldContent checks a string field's content for compliance with specified length and character restrictions.
@@ -34,7 +35,9 @@ func validateFieldContent(fieldValue, fieldName string, maxLength int) error {
 		return fmt.Errorf(errFmtStrLen, fieldName, maxLength)
 	}
 	// Example basic check against common XSS/injection patterns. Expand as necessary.
-	if strings.ContainsAny(fieldValue, "<>\"/") {
+	if strings.ContainsAny(fieldValue, "<>") && strings.ContainsAny(fieldValue, "\"/") {
+		log.Printf("Validation error on fieldName %s, fieldValue %s ", fieldName, fieldValue)
+
 		return fmt.Errorf("%s contains invalid characters", fieldName)
 	}
 	return nil

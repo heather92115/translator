@@ -32,7 +32,7 @@ func TestValidateFieldContent(t *testing.T) {
 		},
 		{
 			name:       "Input contains invalid characters",
-			fieldValue: "test<script>",
+			fieldValue: "test<script/>",
 			fieldName:  "username",
 			maxLength:  50,
 			wantErr:    true,

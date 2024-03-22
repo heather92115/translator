@@ -33,7 +33,15 @@ Then rebuild the server
 To build everything:
 >go build -v ./...
 
-
 To run tests:
 >go test -v ./...
+> 
+ 
+### Put at the top of integration tests:
+//go:build integration
+// +build integration
+
+### To Run integration tests
+> go test -tags=integration ./...
+
 

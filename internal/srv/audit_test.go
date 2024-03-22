@@ -183,6 +183,69 @@ func TestAuditService_FindAuditByID(t *testing.T) {
 	})
 }
 
+// TestAuditService_CreateAudit tests the functionality of the CreateAudit method.
+func TestAuditService_CreateAudit(t *testing.T) {
+	mockRepo := mock.NewMockAuditRepository()
+	service := &AuditService{repo: mockRepo}
+
+	// Define test cases
+	tests := []struct {
+		name       string
+		tableName  string
+		objectId   int
+		comments   string
+		createdBy  string
+		beforeJson string
+		afterJson  string
+		wantErr    bool
+		errMsg     string
+	}{
+		{
+			name:       "Valid audit creation",
+			tableName:  "vocab",
+			objectId:   1,
+			comments:   "Updating vocab entry",
+			createdBy:  "tester",
+			beforeJson: `{"LearningLang":"Hello", "FirstLang":"Hola"}`,
+			afterJson:  `{"LearningLang":"Hello Updated", "FirstLang":"Hola Updated"}`,
+			wantErr:    false,
+		},
+		{
+			name:       "Invalid comments length",
+			tableName:  "vocab",
+			objectId:   1,
+			comments:   string(make([]rune, 1001)), // 1001 characters
+			createdBy:  "tester",
+			beforeJson: `{"LearningLang":"Hello", "FirstLang":"Hola"}`,
+			afterJson:  `{"LearningLang":"Hello Updated", "FirstLang":"Hola Updated"}`,
+			wantErr:    true,
+			errMsg:     "comments must be shorter than 1000 characters",
+		},
+		{
+			name:       "Empty afterJson",
+			tableName:  "vocab",
+			objectId:   1,
+			comments:   "This should still proceed",
+			createdBy:  "tester",
+			beforeJson: `{"LearningLang":"Hello", "FirstLang":"Hola"}`,
+			afterJson:  "",
+			wantErr:    false, // Assuming empty afterJson is considered valid for creation
+		},
+	}
+
+	// Execute test cases
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := service.CreateAudit(tt.tableName, tt.objectId, tt.comments, tt.createdBy, tt.beforeJson, tt.afterJson)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("%s: CreateAudit() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			} else if err != nil && err.Error() != tt.errMsg {
+				t.Errorf("%s: CreateAudit() error = %v, wantErrMsg %v", tt.name, err, tt.errMsg)
+			}
+		})
+	}
+}
+
 // TestAuditService_CreateVocabAudit tests the functionality of CreateVocabAudit method.
 func TestAuditService_CreateVocabAudit(t *testing.T) {
 	// Setup
@@ -228,7 +291,7 @@ func TestAuditService_CreateVocabAudit(t *testing.T) {
 			before:    beforeVocab,
 			after:     afterVocab,
 			wantErr:   true,
-			errMsg:    "comments must not be empty and must be shorter than 1000 characters",
+			errMsg:    "comments must be shorter than 1000 characters",
 		},
 		{
 			name:      "After value is nil",
@@ -237,7 +300,7 @@ func TestAuditService_CreateVocabAudit(t *testing.T) {
 			before:    beforeVocab,
 			after:     nil,
 			wantErr:   true,
-			errMsg:    "after value is required",
+			errMsg:    "after value for vocab is required",
 		},
 		{
 			name:      "Before and after ID mismatch",
@@ -258,6 +321,82 @@ func TestAuditService_CreateVocabAudit(t *testing.T) {
 				t.Errorf("CreateVocabAudit() error = %v, wantErr %v", err, tt.wantErr)
 			} else if err != nil && err.Error() != tt.errMsg {
 				t.Errorf("CreateVocabAudit() error = %v, wantErrMsg %v", err, tt.errMsg)
+			}
+		})
+	}
+}
+
+// TestAuditService_CreateFixitAudit tests the functionality of the CreateFixitAudit method.
+func TestAuditService_CreateFixitAudit(t *testing.T) {
+	mockRepo := mock.NewMockAuditRepository()
+	service := &AuditService{repo: mockRepo}
+
+	beforeFixit := &mdl.Fixit{
+		ID:        1,
+		VocabID:   100,
+		Status:    mdl.StatusType("pending"),
+		FieldName: "Definition",
+		Comments:  "Initial comment",
+		CreatedBy: "tester",
+		Created:   time.Now(),
+	}
+
+	afterFixit := &mdl.Fixit{
+		ID:        1,
+		VocabID:   100,
+		Status:    mdl.StatusType("completed"),
+		FieldName: "Definition",
+		Comments:  "Updated comment",
+		CreatedBy: "tester",
+		Created:   time.Now(),
+	}
+
+	// Define test cases
+	tests := []struct {
+		name      string
+		comments  string
+		createdBy string
+		before    *mdl.Fixit
+		after     *mdl.Fixit
+		wantErr   bool
+		errMsg    string
+	}{
+		{
+			name:      "Valid fixit audit creation",
+			comments:  "Updating fixit entry",
+			createdBy: "tester",
+			before:    beforeFixit,
+			after:     afterFixit,
+			wantErr:   false,
+		},
+		{
+			name:      "After value is nil",
+			comments:  "This should fail",
+			createdBy: "tester",
+			before:    beforeFixit,
+			after:     nil,
+			wantErr:   true,
+			errMsg:    "after value for fixit is required",
+		},
+		{
+			name:      "Before and after ID mismatch",
+			comments:  "Mismatch IDs",
+			createdBy: "tester",
+			before:    &mdl.Fixit{ID: 2}, // Different ID than afterFixit
+			after:     afterFixit,
+			wantErr:   true,
+			errMsg:    "fixit before id 2 and after id 1 mismatch",
+		},
+	}
+
+	// Execute test cases
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := service.CreateFixitAudit(tt.comments, tt.createdBy, tt.before, tt.after)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("%s: CreateFixitAudit() error = %v, wantErr %v", tt.name, err, tt.wantErr)
+			} else if err != nil && err.Error() != tt.errMsg {
+				t.Errorf("%s: CreateFixitAudit() error = %v, wantErrMsg %v", tt.name, err, tt.errMsg)
 			}
 		})
 	}
