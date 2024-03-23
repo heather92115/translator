@@ -47,12 +47,40 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	Audit struct {
+		After     func(childComplexity int) int
+		Before    func(childComplexity int) int
+		Comments  func(childComplexity int) int
+		Created   func(childComplexity int) int
+		CreatedBy func(childComplexity int) int
+		Diff      func(childComplexity int) int
+		ID        func(childComplexity int) int
+		ObjectID  func(childComplexity int) int
+		TableName func(childComplexity int) int
+	}
+
+	Fixit struct {
+		Comments  func(childComplexity int) int
+		Created   func(childComplexity int) int
+		CreatedBy func(childComplexity int) int
+		FieldName func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Status    func(childComplexity int) int
+		VocabID   func(childComplexity int) int
+	}
+
 	Mutation struct {
+		CreateFixit func(childComplexity int, input model.NewFixit) int
 		CreateVocab func(childComplexity int, input model.NewVocab) int
+		UpdateFixit func(childComplexity int, input model.UpdateFixit) int
 		UpdateVocab func(childComplexity int, input model.UpdateVocab) int
 	}
 
 	Query struct {
+		Audit  func(childComplexity int, id *string) int
+		Audits func(childComplexity int, tableName string, objectID string, startTime string, endTime string, limit int) int
+		Fixit  func(childComplexity int, id *string) int
+		Fixits func(childComplexity int, status model.Status, vocabID string, startTime string, endTime string, limit int) int
 		Vocab  func(childComplexity int, id *string) int
 		Vocabs func(childComplexity int, learningCode string, hasFirst bool, limit int) int
 	}
@@ -75,10 +103,16 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	CreateVocab(ctx context.Context, input model.NewVocab) (*model.Vocab, error)
 	UpdateVocab(ctx context.Context, input model.UpdateVocab) (*model.Vocab, error)
+	CreateFixit(ctx context.Context, input model.NewFixit) (*model.Fixit, error)
+	UpdateFixit(ctx context.Context, input model.UpdateFixit) (*model.Fixit, error)
 }
 type QueryResolver interface {
 	Vocab(ctx context.Context, id *string) (*model.Vocab, error)
 	Vocabs(ctx context.Context, learningCode string, hasFirst bool, limit int) ([]*model.Vocab, error)
+	Fixit(ctx context.Context, id *string) (*model.Fixit, error)
+	Fixits(ctx context.Context, status model.Status, vocabID string, startTime string, endTime string, limit int) ([]*model.Fixit, error)
+	Audit(ctx context.Context, id *string) (*model.Audit, error)
+	Audits(ctx context.Context, tableName string, objectID string, startTime string, endTime string, limit int) ([]*model.Audit, error)
 }
 
 type executableSchema struct {
@@ -100,6 +134,130 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
+	case "Audit.after":
+		if e.complexity.Audit.After == nil {
+			break
+		}
+
+		return e.complexity.Audit.After(childComplexity), true
+
+	case "Audit.before":
+		if e.complexity.Audit.Before == nil {
+			break
+		}
+
+		return e.complexity.Audit.Before(childComplexity), true
+
+	case "Audit.comments":
+		if e.complexity.Audit.Comments == nil {
+			break
+		}
+
+		return e.complexity.Audit.Comments(childComplexity), true
+
+	case "Audit.created":
+		if e.complexity.Audit.Created == nil {
+			break
+		}
+
+		return e.complexity.Audit.Created(childComplexity), true
+
+	case "Audit.created_by":
+		if e.complexity.Audit.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.Audit.CreatedBy(childComplexity), true
+
+	case "Audit.diff":
+		if e.complexity.Audit.Diff == nil {
+			break
+		}
+
+		return e.complexity.Audit.Diff(childComplexity), true
+
+	case "Audit.id":
+		if e.complexity.Audit.ID == nil {
+			break
+		}
+
+		return e.complexity.Audit.ID(childComplexity), true
+
+	case "Audit.object_id":
+		if e.complexity.Audit.ObjectID == nil {
+			break
+		}
+
+		return e.complexity.Audit.ObjectID(childComplexity), true
+
+	case "Audit.table_name":
+		if e.complexity.Audit.TableName == nil {
+			break
+		}
+
+		return e.complexity.Audit.TableName(childComplexity), true
+
+	case "Fixit.comments":
+		if e.complexity.Fixit.Comments == nil {
+			break
+		}
+
+		return e.complexity.Fixit.Comments(childComplexity), true
+
+	case "Fixit.created":
+		if e.complexity.Fixit.Created == nil {
+			break
+		}
+
+		return e.complexity.Fixit.Created(childComplexity), true
+
+	case "Fixit.created_by":
+		if e.complexity.Fixit.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.Fixit.CreatedBy(childComplexity), true
+
+	case "Fixit.field_name":
+		if e.complexity.Fixit.FieldName == nil {
+			break
+		}
+
+		return e.complexity.Fixit.FieldName(childComplexity), true
+
+	case "Fixit.id":
+		if e.complexity.Fixit.ID == nil {
+			break
+		}
+
+		return e.complexity.Fixit.ID(childComplexity), true
+
+	case "Fixit.status":
+		if e.complexity.Fixit.Status == nil {
+			break
+		}
+
+		return e.complexity.Fixit.Status(childComplexity), true
+
+	case "Fixit.vocab_id":
+		if e.complexity.Fixit.VocabID == nil {
+			break
+		}
+
+		return e.complexity.Fixit.VocabID(childComplexity), true
+
+	case "Mutation.createFixit":
+		if e.complexity.Mutation.CreateFixit == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createFixit_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateFixit(childComplexity, args["input"].(model.NewFixit)), true
+
 	case "Mutation.createVocab":
 		if e.complexity.Mutation.CreateVocab == nil {
 			break
@@ -112,6 +270,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateVocab(childComplexity, args["input"].(model.NewVocab)), true
 
+	case "Mutation.updateFixit":
+		if e.complexity.Mutation.UpdateFixit == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateFixit_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateFixit(childComplexity, args["input"].(model.UpdateFixit)), true
+
 	case "Mutation.updateVocab":
 		if e.complexity.Mutation.UpdateVocab == nil {
 			break
@@ -123,6 +293,54 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateVocab(childComplexity, args["input"].(model.UpdateVocab)), true
+
+	case "Query.audit":
+		if e.complexity.Query.Audit == nil {
+			break
+		}
+
+		args, err := ec.field_Query_audit_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Audit(childComplexity, args["id"].(*string)), true
+
+	case "Query.audits":
+		if e.complexity.Query.Audits == nil {
+			break
+		}
+
+		args, err := ec.field_Query_audits_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Audits(childComplexity, args["table_name"].(string), args["object_id"].(string), args["start_time"].(string), args["end_time"].(string), args["limit"].(int)), true
+
+	case "Query.fixit":
+		if e.complexity.Query.Fixit == nil {
+			break
+		}
+
+		args, err := ec.field_Query_fixit_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Fixit(childComplexity, args["id"].(*string)), true
+
+	case "Query.fixits":
+		if e.complexity.Query.Fixits == nil {
+			break
+		}
+
+		args, err := ec.field_Query_fixits_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Fixits(childComplexity, args["status"].(model.Status), args["vocab_id"].(string), args["start_time"].(string), args["end_time"].(string), args["limit"].(int)), true
 
 	case "Query.vocab":
 		if e.complexity.Query.Vocab == nil {
@@ -233,7 +451,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputNewFixit,
 		ec.unmarshalInputNewVocab,
+		ec.unmarshalInputUpdateFixit,
 		ec.unmarshalInputUpdateVocab,
 	)
 	first := true
@@ -351,6 +571,21 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
 // region    ***************************** args.gotpl *****************************
 
+func (ec *executionContext) field_Mutation_createFixit_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.NewFixit
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNNewFixit2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐNewFixit(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createVocab_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -358,6 +593,21 @@ func (ec *executionContext) field_Mutation_createVocab_args(ctx context.Context,
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNNewVocab2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐNewVocab(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateFixit_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.UpdateFixit
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNUpdateFixit2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐUpdateFixit(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -393,6 +643,138 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_audit_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_audits_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["table_name"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("table_name"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["table_name"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["object_id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("object_id"))
+		arg1, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["object_id"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["start_time"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("start_time"))
+		arg2, err = ec.unmarshalNDateTime2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["start_time"] = arg2
+	var arg3 string
+	if tmp, ok := rawArgs["end_time"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("end_time"))
+		arg3, err = ec.unmarshalNDateTime2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["end_time"] = arg3
+	var arg4 int
+	if tmp, ok := rawArgs["limit"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+		arg4, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg4
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_fixit_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_fixits_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.Status
+	if tmp, ok := rawArgs["status"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+		arg0, err = ec.unmarshalNStatus2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐStatus(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["status"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["vocab_id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vocab_id"))
+		arg1, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["vocab_id"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["start_time"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("start_time"))
+		arg2, err = ec.unmarshalNDateTime2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["start_time"] = arg2
+	var arg3 string
+	if tmp, ok := rawArgs["end_time"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("end_time"))
+		arg3, err = ec.unmarshalNDateTime2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["end_time"] = arg3
+	var arg4 int
+	if tmp, ok := rawArgs["limit"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+		arg4, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg4
 	return args, nil
 }
 
@@ -481,6 +863,710 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _Audit_id(ctx context.Context, field graphql.CollectedField, obj *model.Audit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Audit_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Audit_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Audit",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Audit_object_id(ctx context.Context, field graphql.CollectedField, obj *model.Audit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Audit_object_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ObjectID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Audit_object_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Audit",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Audit_table_name(ctx context.Context, field graphql.CollectedField, obj *model.Audit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Audit_table_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TableName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Audit_table_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Audit",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Audit_diff(ctx context.Context, field graphql.CollectedField, obj *model.Audit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Audit_diff(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Diff, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Audit_diff(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Audit",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Audit_before(ctx context.Context, field graphql.CollectedField, obj *model.Audit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Audit_before(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Before, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Audit_before(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Audit",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Audit_after(ctx context.Context, field graphql.CollectedField, obj *model.Audit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Audit_after(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.After, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Audit_after(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Audit",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Audit_comments(ctx context.Context, field graphql.CollectedField, obj *model.Audit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Audit_comments(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Comments, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Audit_comments(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Audit",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Audit_created_by(ctx context.Context, field graphql.CollectedField, obj *model.Audit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Audit_created_by(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Audit_created_by(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Audit",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Audit_created(ctx context.Context, field graphql.CollectedField, obj *model.Audit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Audit_created(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Created, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNDateTime2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Audit_created(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Audit",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Fixit_id(ctx context.Context, field graphql.CollectedField, obj *model.Fixit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Fixit_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Fixit_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Fixit",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Fixit_vocab_id(ctx context.Context, field graphql.CollectedField, obj *model.Fixit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Fixit_vocab_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.VocabID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Fixit_vocab_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Fixit",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Fixit_status(ctx context.Context, field graphql.CollectedField, obj *model.Fixit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Fixit_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.Status)
+	fc.Result = res
+	return ec.marshalNStatus2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Fixit_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Fixit",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Status does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Fixit_field_name(ctx context.Context, field graphql.CollectedField, obj *model.Fixit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Fixit_field_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FieldName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Fixit_field_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Fixit",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Fixit_comments(ctx context.Context, field graphql.CollectedField, obj *model.Fixit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Fixit_comments(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Comments, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Fixit_comments(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Fixit",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Fixit_created_by(ctx context.Context, field graphql.CollectedField, obj *model.Fixit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Fixit_created_by(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Fixit_created_by(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Fixit",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Fixit_created(ctx context.Context, field graphql.CollectedField, obj *model.Fixit) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Fixit_created(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Created, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNDateTime2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Fixit_created(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Fixit",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
 
 func (ec *executionContext) _Mutation_createVocab(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createVocab(ctx, field)
@@ -640,6 +1726,148 @@ func (ec *executionContext) fieldContext_Mutation_updateVocab(ctx context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_createFixit(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createFixit(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateFixit(rctx, fc.Args["input"].(model.NewFixit))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Fixit)
+	fc.Result = res
+	return ec.marshalNFixit2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐFixit(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createFixit(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Fixit_id(ctx, field)
+			case "vocab_id":
+				return ec.fieldContext_Fixit_vocab_id(ctx, field)
+			case "status":
+				return ec.fieldContext_Fixit_status(ctx, field)
+			case "field_name":
+				return ec.fieldContext_Fixit_field_name(ctx, field)
+			case "comments":
+				return ec.fieldContext_Fixit_comments(ctx, field)
+			case "created_by":
+				return ec.fieldContext_Fixit_created_by(ctx, field)
+			case "created":
+				return ec.fieldContext_Fixit_created(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Fixit", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createFixit_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateFixit(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateFixit(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateFixit(rctx, fc.Args["input"].(model.UpdateFixit))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Fixit)
+	fc.Result = res
+	return ec.marshalNFixit2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐFixit(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateFixit(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Fixit_id(ctx, field)
+			case "vocab_id":
+				return ec.fieldContext_Fixit_vocab_id(ctx, field)
+			case "status":
+				return ec.fieldContext_Fixit_status(ctx, field)
+			case "field_name":
+				return ec.fieldContext_Fixit_field_name(ctx, field)
+			case "comments":
+				return ec.fieldContext_Fixit_comments(ctx, field)
+			case "created_by":
+				return ec.fieldContext_Fixit_created_by(ctx, field)
+			case "created":
+				return ec.fieldContext_Fixit_created(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Fixit", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateFixit_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_vocab(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_vocab(ctx, field)
 	if err != nil {
@@ -789,6 +2017,292 @@ func (ec *executionContext) fieldContext_Query_vocabs(ctx context.Context, field
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_vocabs_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_fixit(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_fixit(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Fixit(rctx, fc.Args["id"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Fixit)
+	fc.Result = res
+	return ec.marshalOFixit2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐFixit(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_fixit(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Fixit_id(ctx, field)
+			case "vocab_id":
+				return ec.fieldContext_Fixit_vocab_id(ctx, field)
+			case "status":
+				return ec.fieldContext_Fixit_status(ctx, field)
+			case "field_name":
+				return ec.fieldContext_Fixit_field_name(ctx, field)
+			case "comments":
+				return ec.fieldContext_Fixit_comments(ctx, field)
+			case "created_by":
+				return ec.fieldContext_Fixit_created_by(ctx, field)
+			case "created":
+				return ec.fieldContext_Fixit_created(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Fixit", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_fixit_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_fixits(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_fixits(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Fixits(rctx, fc.Args["status"].(model.Status), fc.Args["vocab_id"].(string), fc.Args["start_time"].(string), fc.Args["end_time"].(string), fc.Args["limit"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Fixit)
+	fc.Result = res
+	return ec.marshalNFixit2ᚕᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐFixit(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_fixits(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Fixit_id(ctx, field)
+			case "vocab_id":
+				return ec.fieldContext_Fixit_vocab_id(ctx, field)
+			case "status":
+				return ec.fieldContext_Fixit_status(ctx, field)
+			case "field_name":
+				return ec.fieldContext_Fixit_field_name(ctx, field)
+			case "comments":
+				return ec.fieldContext_Fixit_comments(ctx, field)
+			case "created_by":
+				return ec.fieldContext_Fixit_created_by(ctx, field)
+			case "created":
+				return ec.fieldContext_Fixit_created(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Fixit", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_fixits_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_audit(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_audit(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Audit(rctx, fc.Args["id"].(*string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Audit)
+	fc.Result = res
+	return ec.marshalOAudit2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐAudit(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_audit(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Audit_id(ctx, field)
+			case "object_id":
+				return ec.fieldContext_Audit_object_id(ctx, field)
+			case "table_name":
+				return ec.fieldContext_Audit_table_name(ctx, field)
+			case "diff":
+				return ec.fieldContext_Audit_diff(ctx, field)
+			case "before":
+				return ec.fieldContext_Audit_before(ctx, field)
+			case "after":
+				return ec.fieldContext_Audit_after(ctx, field)
+			case "comments":
+				return ec.fieldContext_Audit_comments(ctx, field)
+			case "created_by":
+				return ec.fieldContext_Audit_created_by(ctx, field)
+			case "created":
+				return ec.fieldContext_Audit_created(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Audit", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_audit_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_audits(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_audits(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Audits(rctx, fc.Args["table_name"].(string), fc.Args["object_id"].(string), fc.Args["start_time"].(string), fc.Args["end_time"].(string), fc.Args["limit"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Audit)
+	fc.Result = res
+	return ec.marshalNAudit2ᚕᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐAudit(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_audits(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Audit_id(ctx, field)
+			case "object_id":
+				return ec.fieldContext_Audit_object_id(ctx, field)
+			case "table_name":
+				return ec.fieldContext_Audit_table_name(ctx, field)
+			case "diff":
+				return ec.fieldContext_Audit_diff(ctx, field)
+			case "before":
+				return ec.fieldContext_Audit_before(ctx, field)
+			case "after":
+				return ec.fieldContext_Audit_after(ctx, field)
+			case "comments":
+				return ec.fieldContext_Audit_comments(ctx, field)
+			case "created_by":
+				return ec.fieldContext_Audit_created_by(ctx, field)
+			case "created":
+				return ec.fieldContext_Audit_created(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Audit", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_audits_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -3181,6 +4695,54 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputNewFixit(ctx context.Context, obj interface{}) (model.NewFixit, error) {
+	var it model.NewFixit
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"vocab_id", "status", "field_name", "comments"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "vocab_id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("vocab_id"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.VocabID = data
+		case "status":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalNStatus2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Status = data
+		case "field_name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field_name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.FieldName = data
+		case "comments":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("comments"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Comments = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewVocab(ctx context.Context, obj interface{}) (model.NewVocab, error) {
 	var it model.NewVocab
 	asMap := map[string]interface{}{}
@@ -3271,6 +4833,54 @@ func (ec *executionContext) unmarshalInputNewVocab(ctx context.Context, obj inte
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateFixit(ctx context.Context, obj interface{}) (model.UpdateFixit, error) {
+	var it model.UpdateFixit
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "status", "field_name", "comments"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "status":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalNStatus2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Status = data
+		case "field_name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field_name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.FieldName = data
+		case "comments":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("comments"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Comments = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateVocab(ctx context.Context, obj interface{}) (model.UpdateVocab, error) {
 	var it model.UpdateVocab
 	asMap := map[string]interface{}{}
@@ -3278,7 +4888,7 @@ func (ec *executionContext) unmarshalInputUpdateVocab(ctx context.Context, obj i
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "first_lang", "alternatives", "skill", "infinitive", "pos", "hint", "num_learning_words", "known_lang_code", "learning_lang_code"}
+	fieldsInOrder := [...]string{"id", "first_lang", "alternatives", "skill", "infinitive", "pos", "hint", "num_learning_words"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3341,20 +4951,6 @@ func (ec *executionContext) unmarshalInputUpdateVocab(ctx context.Context, obj i
 				return it, err
 			}
 			it.NumLearningWords = data
-		case "known_lang_code":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("known_lang_code"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.KnownLangCode = data
-		case "learning_lang_code":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("learning_lang_code"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.LearningLangCode = data
 		}
 	}
 
@@ -3368,6 +4964,154 @@ func (ec *executionContext) unmarshalInputUpdateVocab(ctx context.Context, obj i
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
+
+var auditImplementors = []string{"Audit"}
+
+func (ec *executionContext) _Audit(ctx context.Context, sel ast.SelectionSet, obj *model.Audit) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, auditImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Audit")
+		case "id":
+			out.Values[i] = ec._Audit_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "object_id":
+			out.Values[i] = ec._Audit_object_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "table_name":
+			out.Values[i] = ec._Audit_table_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "diff":
+			out.Values[i] = ec._Audit_diff(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "before":
+			out.Values[i] = ec._Audit_before(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "after":
+			out.Values[i] = ec._Audit_after(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "comments":
+			out.Values[i] = ec._Audit_comments(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "created_by":
+			out.Values[i] = ec._Audit_created_by(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "created":
+			out.Values[i] = ec._Audit_created(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var fixitImplementors = []string{"Fixit"}
+
+func (ec *executionContext) _Fixit(ctx context.Context, sel ast.SelectionSet, obj *model.Fixit) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, fixitImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Fixit")
+		case "id":
+			out.Values[i] = ec._Fixit_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "vocab_id":
+			out.Values[i] = ec._Fixit_vocab_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "status":
+			out.Values[i] = ec._Fixit_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "field_name":
+			out.Values[i] = ec._Fixit_field_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "comments":
+			out.Values[i] = ec._Fixit_comments(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "created_by":
+			out.Values[i] = ec._Fixit_created_by(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "created":
+			out.Values[i] = ec._Fixit_created(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
 
 var mutationImplementors = []string{"Mutation"}
 
@@ -3398,6 +5142,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "updateVocab":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateVocab(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createFixit":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createFixit(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateFixit":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateFixit(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -3473,6 +5231,88 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_vocabs(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "fixit":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_fixit(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "fixits":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_fixits(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "audit":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_audit(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "audits":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_audits(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -3931,6 +5771,44 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) marshalNAudit2ᚕᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐAudit(ctx context.Context, sel ast.SelectionSet, v []*model.Audit) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOAudit2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐAudit(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3944,6 +5822,73 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNDateTime2string(ctx context.Context, v interface{}) (string, error) {
+	res, err := graphql.UnmarshalString(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNDateTime2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	res := graphql.MarshalString(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) marshalNFixit2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐFixit(ctx context.Context, sel ast.SelectionSet, v model.Fixit) graphql.Marshaler {
+	return ec._Fixit(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNFixit2ᚕᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐFixit(ctx context.Context, sel ast.SelectionSet, v []*model.Fixit) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOFixit2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐFixit(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalNFixit2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐFixit(ctx context.Context, sel ast.SelectionSet, v *model.Fixit) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Fixit(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
@@ -3976,9 +5921,24 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
+func (ec *executionContext) unmarshalNNewFixit2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐNewFixit(ctx context.Context, v interface{}) (model.NewFixit, error) {
+	res, err := ec.unmarshalInputNewFixit(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNNewVocab2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐNewVocab(ctx context.Context, v interface{}) (model.NewVocab, error) {
 	res, err := ec.unmarshalInputNewVocab(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNStatus2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐStatus(ctx context.Context, v interface{}) (model.Status, error) {
+	var res model.Status
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNStatus2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐStatus(ctx context.Context, sel ast.SelectionSet, v model.Status) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -3994,6 +5954,11 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNUpdateFixit2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐUpdateFixit(ctx context.Context, v interface{}) (model.UpdateFixit, error) {
+	res, err := ec.unmarshalInputUpdateFixit(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNUpdateVocab2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐUpdateVocab(ctx context.Context, v interface{}) (model.UpdateVocab, error) {
@@ -4312,6 +6277,13 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
+func (ec *executionContext) marshalOAudit2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐAudit(ctx context.Context, sel ast.SelectionSet, v *model.Audit) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Audit(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -4336,6 +6308,13 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOFixit2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐFixit(ctx context.Context, sel ast.SelectionSet, v *model.Fixit) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Fixit(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v interface{}) (*string, error) {

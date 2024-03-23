@@ -108,9 +108,13 @@ func (s *FixitService) UpdateFixit(updating *mdl.Fixit) (fixit *mdl.Fixit, err e
 	fixit = before.Clone()
 
 	// Update allowed to change fields
-	fixit.Status = updating.Status
-	fixit.FieldName = updating.FieldName
-	fixit.Comments = updating.Comments
+	if fixit.Status != updating.Status || fixit.FieldName != updating.FieldName || fixit.Comments != updating.Comments {
+		fixit.Status = updating.Status
+		fixit.FieldName = updating.FieldName
+		fixit.Comments = updating.Comments
+	} else {
+		return nil, fmt.Errorf("update for fixit %d has no changes", fixit.ID)
+	}
 
 	err = s.repo.UpdateFixit(fixit)
 	if err != nil {

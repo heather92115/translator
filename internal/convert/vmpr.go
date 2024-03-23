@@ -68,8 +68,6 @@ func VocabFromGql(from *model.UpdateVocab) (*mdl.Vocab, error) {
 		Pos:              from.Pos,
 		Hint:             from.Hint,
 		NumLearningWords: from.NumLearningWords,
-		KnownLangCode:    from.KnownLangCode,
-		LearningLangCode: from.LearningLangCode,
 	}, nil
 }
 

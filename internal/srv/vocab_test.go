@@ -305,17 +305,6 @@ func TestVocabService_UpdateVocab(t *testing.T) {
 			wantErr: true,
 			errMsg:  "error finding vocab with id 999",
 		},
-		{
-			name: "Invalid vocab - missing learning language",
-			vocab: &mdl.Vocab{
-				ID:               1,
-				FirstLang:        "hello again",
-				LearningLangCode: "es",
-				KnownLangCode:    "en",
-			},
-			wantErr: true,
-			errMsg:  "learning lang field is required",
-		},
 	}
 
 	// Execute test cases

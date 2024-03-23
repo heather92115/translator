@@ -13,7 +13,7 @@ type AuditService struct {
 	repo db.AuditRepository
 }
 
-// NewAuditService creates a new instance of AuditService.
+// NewAuditService creates a new instance of AuditService with SQL backed repo.
 func NewAuditService() (*AuditService, error) {
 
 	repo, err := db.NewSqlAuditRepository()
@@ -278,7 +278,12 @@ func CompareJSON(jsonStr1, jsonStr2 string) string {
 	diffs := findDiffs(obj1, obj2, "")
 
 	diffJSON, _ := json.Marshal(diffs)
-	return string(diffJSON)
+
+	if len(diffJSON) > 0 {
+		return string(diffJSON)
+	}
+
+	return ""
 }
 
 // findDiffs compares two maps of string keys to interface{} values and returns a slice of DiffResult

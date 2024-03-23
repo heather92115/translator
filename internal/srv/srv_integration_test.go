@@ -112,6 +112,7 @@ func TestIntegrationFixitService_CreateFindUpdate(t *testing.T) {
 		}
 
 		fixit.Status = "completed"
+		fixit.Comments = randomLetters(20)
 		updated, err := fixitService.UpdateFixit(&fixit)
 		if err != nil {
 			t.Errorf("Unexpected error on update: %v", err)
@@ -212,13 +213,13 @@ func TestIntegrationVocabService_CreateFindUpdate(t *testing.T) {
 			t.Errorf("Expected vocab with id %d to have learning lang code 'is'", vocab.ID)
 		}
 
-		vocab.Hint = "starts with 'em'"
+		vocab.Hint = randomLetters(20)
 		updated, err := vocabService.UpdateVocab(&vocab)
 		if err != nil {
 			t.Errorf("Unexpected error on update %+v, err: %v", vocab, err)
 			return
 		}
-		if updated.Hint != "starts with 'em'" {
+		if updated.Hint != vocab.Hint {
 			t.Errorf("Expected vocab with id %d to have updated hint", vocab.ID)
 		}
 	}
