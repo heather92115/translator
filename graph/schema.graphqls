@@ -2,6 +2,8 @@
 #
 # https://gqlgen.com/getting-started/
 
+scalar DateTime
+
 type Vocab {
   id: ID!
   learning_lang: String!
@@ -16,9 +18,41 @@ type Vocab {
   learning_lang_code: String!
 }
 
+enum Status {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+type Fixit {
+  id: ID!
+  vocab_id: ID!
+  status: Status!
+  field_name: String!
+  comments: String!
+  created_by: String!
+  created: DateTime!
+}
+
+type Audit {
+  id: ID!
+  object_id: ID!
+  table_name: String!
+  diff: String!
+  before: String!
+  after: String!
+  comments: String!
+  created_by: String!
+  created: DateTime!
+}
+
 type Query {
   vocab(id: ID): Vocab
   vocabs(learning_code: String!, has_first: Boolean!, limit: Int!): [Vocab!]!
+  fixit(id: ID): Fixit
+  fixits(status: Status!, vocab_id: ID!, start_time: DateTime!, end_time: DateTime!, limit: Int!): [Fixit]!
+  audit(id: ID): Audit
+  audits(table_name: String!, object_id: ID!, start_time: DateTime!, end_time: DateTime!, limit: Int!): [Audit]!
 }
 
 input NewVocab {
@@ -43,11 +77,25 @@ input UpdateVocab {
   pos: String!
   hint: String!
   num_learning_words: Int!
-  known_lang_code: String!
-  learning_lang_code: String!
+}
+
+input NewFixit {
+  vocab_id: ID!
+  status: Status!
+  field_name: String!
+  comments: String!
+}
+
+input UpdateFixit {
+  id: ID!
+  status: Status!
+  field_name: String!
+  comments: String!
 }
 
 type Mutation {
   createVocab(input: NewVocab!): Vocab!
   updateVocab(input: UpdateVocab!): Vocab!
+  createFixit(input: NewFixit!): Fixit!
+  updateFixit(input: UpdateFixit!): Fixit!
 }

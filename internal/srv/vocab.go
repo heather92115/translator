@@ -122,7 +122,7 @@ func (s *VocabService) CreateVocab(vocab *mdl.Vocab) (err error) {
 
 func (s *VocabService) UpdateVocab(updating *mdl.Vocab) (vocab *mdl.Vocab, err error) {
 
-	if err = validateVocab(updating); err != nil {
+	if err = validateVocabUpdate(updating); err != nil {
 		return
 	}
 
@@ -136,11 +136,24 @@ func (s *VocabService) UpdateVocab(updating *mdl.Vocab) (vocab *mdl.Vocab, err e
 
 	vocab = before.Clone()
 
-	// Update allowed to change fields
-	vocab.Hint = updating.Hint
-	vocab.Pos = updating.Pos
-	vocab.FirstLang = updating.FirstLang
-	vocab.Alternatives = updating.Alternatives
+	if vocab.Hint != updating.Hint ||
+		vocab.Pos != updating.Pos ||
+		vocab.Skill != updating.Skill ||
+		vocab.FirstLang != updating.FirstLang ||
+		vocab.Infinitive != updating.Infinitive ||
+		vocab.Alternatives != updating.Alternatives ||
+		vocab.NumLearningWords != updating.NumLearningWords {
+		// Update allowed to change fields
+		vocab.Hint = updating.Hint
+		vocab.Pos = updating.Pos
+		vocab.Skill = updating.Skill
+		vocab.FirstLang = updating.FirstLang
+		vocab.Infinitive = updating.Infinitive
+		vocab.Alternatives = updating.Alternatives
+		vocab.NumLearningWords = updating.NumLearningWords
+	} else {
+		return nil, fmt.Errorf("update for vocab %d has no changes", vocab.ID)
+	}
 
 	err = s.repo.UpdateVocab(vocab)
 	if err != nil {
@@ -191,6 +204,40 @@ func validateVocab(vocab *mdl.Vocab) error {
 		return fmt.Errorf("learning lang field is required")
 	}
 
+	if err := validateVocabUpdate(vocab); err != nil {
+		return err
+	}
+
+	// Validate language codes with a more specific pattern
+	langCodePattern := regexp.MustCompile(`^[a-z]{2}$`)
+	if !langCodePattern.MatchString(vocab.KnownLangCode) || !langCodePattern.MatchString(vocab.LearningLangCode) {
+		return fmt.Errorf(errFmtStrLangCode, "Language codes")
+	}
+
+	return nil
+}
+
+// validateVocabUpdate checks the validity of a Vocab struct's fields in the context of an update against defined
+// constraints. It ensures that string fields do not exceed their maximum lengths and do not contain characters
+// potentially harmful in the context of HTML or SQL. Specifically, it validates the 'LearningLang',
+// 'FirstLang', 'Alternatives', 'Skill', 'Infinitive', 'Pos', and 'Hint' fields for length and restricted
+// characters, and ensures 'KnownLangCode' and 'LearningLangCode' match the expected pattern for language codes.
+//
+// Parameters:
+// - vocab: A pointer to the Vocab struct to validate.
+//
+// Returns:
+//   - An error if any validation fails, detailing the issue with the corresponding field.
+//     If all fields pass validation, nil is returned.
+//
+// Usage example:
+// err := validateVocabUpdate(&vocab)
+//
+//	if err != nil {
+//	    log.Printf("Validation failed: %v", err)
+//	}
+func validateVocabUpdate(vocab *mdl.Vocab) error {
+
 	if err := validateFieldContent(vocab.FirstLang, "First language", maxFirstLangLen); err != nil {
 		return err
 	}
@@ -208,12 +255,6 @@ func validateVocab(vocab *mdl.Vocab) error {
 	}
 	if err := validateFieldContent(vocab.Hint, "Hint", maxHintLen); err != nil {
 		return err
-	}
-
-	// Validate language codes with a more specific pattern
-	langCodePattern := regexp.MustCompile(`^[a-z]{2}$`)
-	if !langCodePattern.MatchString(vocab.KnownLangCode) || !langCodePattern.MatchString(vocab.LearningLangCode) {
-		return fmt.Errorf(errFmtStrLangCode, "Language codes")
 	}
 
 	return nil

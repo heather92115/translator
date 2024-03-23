@@ -64,9 +64,59 @@ func (r *mutationResolver) UpdateVocab(ctx context.Context, input model.UpdateVo
 	return outgoing, nil
 }
 
+// CreateFixit is the resolver for the createFixit field.
+func (r *mutationResolver) CreateFixit(ctx context.Context, input model.NewFixit) (*model.Fixit, error) {
+	incoming, err := convert.NewFixitFromGql(&input)
+	if err != nil {
+		return nil, err
+	}
+
+	fixitService, err := srv.NewFixitService()
+	if err != nil {
+		return nil, err
+	}
+
+	err = fixitService.CreateFixit(incoming)
+	if err != nil {
+		return nil, err
+	}
+
+	outgoing, err := convert.FixitToGql(incoming)
+	if err != nil {
+		return nil, err
+	}
+
+	return outgoing, nil
+}
+
+// UpdateFixit is the resolver for the updateFixit field.
+func (r *mutationResolver) UpdateFixit(ctx context.Context, input model.UpdateFixit) (*model.Fixit, error) {
+	incoming, err := convert.UpdateFixitFromGql(&input)
+	if err != nil {
+		return nil, err
+	}
+
+	fixitService, err := srv.NewFixitService()
+	if err != nil {
+		return nil, err
+	}
+
+	updated, err := fixitService.UpdateFixit(incoming)
+	if err != nil {
+		return nil, err
+	}
+
+	outgoing, err := convert.FixitToGql(updated)
+	if err != nil {
+		return nil, err
+	}
+
+	return outgoing, nil
+}
+
 // Vocab is the resolver for the vocab field.
 func (r *queryResolver) Vocab(ctx context.Context, id *string) (*model.Vocab, error) {
-	primaryId, err := strconv.Atoi(*id)
+	primaryID, err := strconv.Atoi(*id)
 	if err != nil {
 		return nil, fmt.Errorf("invalid id %s", *id)
 	}
@@ -76,7 +126,7 @@ func (r *queryResolver) Vocab(ctx context.Context, id *string) (*model.Vocab, er
 		return nil, err
 	}
 
-	interim, err := vocabService.FindVocabByID(primaryId)
+	interim, err := vocabService.FindVocabByID(primaryID)
 	if err != nil {
 		return nil, err
 	}
@@ -97,6 +147,86 @@ func (r *queryResolver) Vocabs(ctx context.Context, learningCode string, hasFirs
 	}
 
 	return convert.VocabsToGql(list)
+}
+
+// Fixit is the resolver for the fixit field.
+func (r *queryResolver) Fixit(ctx context.Context, id *string) (*model.Fixit, error) {
+	primaryID, err := strconv.Atoi(*id)
+	if err != nil {
+		return nil, fmt.Errorf("invalid id %s", *id)
+	}
+
+	fixitService, err := srv.NewFixitService()
+	if err != nil {
+		return nil, err
+	}
+
+	interim, err := fixitService.FindFixitByID(primaryID)
+	if err != nil {
+		return nil, err
+	}
+
+	return convert.FixitToGql(interim)
+}
+
+// Fixits is the resolver for the fixits field.
+func (r *queryResolver) Fixits(ctx context.Context, status model.Status, vocabID string, startTime string, endTime string, limit int) ([]*model.Fixit, error) {
+	fixitService, err := srv.NewFixitService()
+	if err != nil {
+		return nil, err
+	}
+
+	fStatus, fVocabID, duration, err := convert.FixitsQueryMapper(status, vocabID, startTime, endTime)
+	if err != nil {
+		return nil, err
+	}
+
+	list, err := fixitService.FindFixits(fStatus, fVocabID, duration, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	return convert.FixitsToGql(list)
+}
+
+// Audit is the resolver for the audit field.
+func (r *queryResolver) Audit(ctx context.Context, id *string) (*model.Audit, error) {
+	primaryID, err := strconv.Atoi(*id)
+	if err != nil {
+		return nil, fmt.Errorf("invalid id %s", *id)
+	}
+
+	auditService, err := srv.NewAuditService()
+	if err != nil {
+		return nil, err
+	}
+
+	interim, err := auditService.FindAuditByID(primaryID)
+	if err != nil {
+		return nil, err
+	}
+
+	return convert.AuditToGql(interim)
+}
+
+// Audits is the resolver for the audits field.
+func (r *queryResolver) Audits(ctx context.Context, tableName string, objectID string, startTime string, endTime string, limit int) ([]*model.Audit, error) {
+	auditService, err := srv.NewAuditService()
+	if err != nil {
+		return nil, err
+	}
+
+	aObjectID, duration, err := convert.AuditQueryMapper(objectID, startTime, endTime)
+	if err != nil {
+		return nil, err
+	}
+
+	list, err := auditService.FindAudits(tableName, aObjectID, duration, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	return convert.AuditsToGql(list)
 }
 
 // Mutation returns MutationResolver implementation.
