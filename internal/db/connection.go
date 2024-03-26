@@ -8,36 +8,10 @@ import (
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 	"log"
-	"net/url"
-	"os" // Import the os package
 	"time"
 )
 
 var globalDb *gorm.DB
-
-// getEnv retrieves environment variables or returns a default value
-func getEnv(key, defaultValue string) string {
-	value, exists := os.LookupEnv(key)
-	if !exists {
-		return defaultValue
-	}
-	return value
-}
-
-// createDatabaseURL constructs a PostgreSQL connection string using environment variables
-func createDatabaseURL() string {
-	host := getEnv("DATABASE_IP", "localhost")
-	port := getEnv("DATABASE_PORT", "5433")
-	user := getEnv("DATABASE_USER", "fixer")
-	password := getEnv("DATABASE_PASSWORD", "")
-	dbname := getEnv("DATABASE_NAME", "postgres")
-
-	// Manually construct the URL, ensuring special characters in the password are encoded
-	password = url.QueryEscape(password)
-	connectionString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-
-	return connectionString
-}
 
 // CreatePool initializes the global db connection pool using
 // environment variables. The function configures the db connection pool with
@@ -47,7 +21,7 @@ func createDatabaseURL() string {
 // CreatePool returns an error.
 func CreatePool() (err error) {
 
-	dsn := createDatabaseURL()
+	dsn := GetDatabaseURL()
 
 	globalDb, err = gorm.Open(postgres.New(postgres.Config{
 		DSN:                  dsn,
