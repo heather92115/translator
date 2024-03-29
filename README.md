@@ -9,16 +9,14 @@ To build the server:
 > go build -o server ./cmd/server
 
 ### DB Connectivity
-The following environment variables are required to connect to Postgres
->export DATABASE_IP="0.0.0.0"
->
->export DATABASE_PORT="5432"
+The following environment variables are required to connect to Postgres. The DB_LINK in
+conjunction with the aws cli to obtain db connection properties.
+> export DB_LINK="dev/aws/secret"
 > 
->export DATABASE_USER="dbuser"
-> 
->export DATABASE_PASSWORD="****"
-> 
->export DATABASE_NAME="postgres"
+> export REGION="us-east-1"
+
+You can find docs here: [AWS Secret Manager](https://docs.aws.amazon.com/secretsmanager/latest/userguide/managing-secrets.html?icmpid=docs_asm_help_panel)
+
 
 ### GraphQL is used to access the system.
 
@@ -33,13 +31,23 @@ Then rebuild the server
 To build everything:
 >go build -v ./...
 
-To run tests:
+# To run tests:
 >go test -v ./...
 > 
- 
-### Put at the top of integration tests:
+
+# To run Integration Tests
+
+### Add these tags to the top of each integration test:
 //go:build integration
 // +build integration
+
+### Set the env var to find the .env.test
+> export ENV_TEST_PATH="/Users/dev/go/src/translator/.env.test"
+
+### Setup different db for your integration tests
+> export DB_LINK="test/aws/secret"
+>
+> export REGION="us-east-1"
 
 ### To Run integration tests
 > go test -tags=integration ./...
