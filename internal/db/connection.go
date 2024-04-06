@@ -19,9 +19,7 @@ var globalDb *gorm.DB
 // lifetime of a connection. If an error occurs while
 // establishing a connection to the db, including setting up the connection pool,
 // CreatePool returns an error.
-func CreatePool() (err error) {
-
-	dsn := GetDatabaseURL()
+func CreatePool(dsn string) (err error) {
 
 	globalDb, err = gorm.Open(postgres.New(postgres.Config{
 		DSN:                  dsn,
