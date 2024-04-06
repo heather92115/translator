@@ -16,7 +16,9 @@ const defaultPort = "8090"
 func main() {
 	fmt.Println("Starting the gql server")
 
-	err := db.CreatePool()
+	dsn := db.GetDatabaseURL()
+
+	err := db.CreatePool(dsn)
 	if err != nil {
 		fmt.Printf("Failed DB connections, %v\n", err)
 		return

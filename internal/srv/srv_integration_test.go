@@ -25,15 +25,8 @@ func TestMain(m *testing.M) {
 	if err := godotenv.Load(envPath); err != nil {
 		log.Fatalf("Error loading .env.test file: %v", err)
 	}
-
-	dbUser := os.Getenv("DATABASE_USER")
-	dbIp := os.Getenv("DATABASE_IP")
-	dbPort := os.Getenv("DATABASE_PORT")
-	if dbUser != "tester" {
-		log.Fatalf("Did not find the tester user: %s, %s, %s", dbUser, dbIp, dbPort)
-	}
-
-	err := db.CreatePool()
+	testUrl := os.Getenv("PAL_TEST_DATABASE_URL")
+	err := db.CreatePool(testUrl)
 	if err != nil {
 		fmt.Printf("Failed DB connections, %v\n", err)
 		return
