@@ -9,9 +9,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/heather92115/translator/graph/model"
-	"github.com/heather92115/translator/internal/convert"
-	"github.com/heather92115/translator/internal/srv"
+	"github.com/heather92115/verdure-admin/graph/model"
+	"github.com/heather92115/verdure-admin/internal/convert"
+	"github.com/heather92115/verdure-admin/internal/srv"
 )
 
 // CreateVocab is the resolver for the createVocab field.

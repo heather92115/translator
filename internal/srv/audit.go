@@ -3,8 +3,8 @@ package srv
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/heather92115/translator/internal/db"
-	"github.com/heather92115/translator/internal/mdl"
+	"github.com/heather92115/verdure-admin/internal/db"
+	"github.com/heather92115/verdure-admin/internal/mdl"
 	"sort"
 )
 

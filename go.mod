@@ -1,4 +1,4 @@
-module github.com/heather92115/translator
+module github.com/heather92115/verdure-admin
 
 go 1.22
 

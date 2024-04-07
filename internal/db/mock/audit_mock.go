@@ -2,7 +2,7 @@ package mock
 
 import (
 	"errors"
-	"github.com/heather92115/translator/internal/mdl"
+	"github.com/heather92115/verdure-admin/internal/mdl"
 )
 
 type MockAuditRepository struct {
