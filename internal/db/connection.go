@@ -2,7 +2,7 @@ package db
 
 import (
 	"fmt"
-	"github.com/heather92115/translator/internal/mdl"
+	"github.com/heather92115/verdure-admin/internal/mdl"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

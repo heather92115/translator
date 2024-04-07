@@ -1,8 +1,8 @@
-# Translator
+# Verdure Admin
 
-The Translator application is the backend system to Administrate the 
-Palabras system. It is used to manage the vocabulary stored in a 
-PostgreSQL relational database. 
+The Verdure Admin application is the backend system to Administrate the 
+Verdure application written in Rust. It is used to manage the vocabulary 
+stored in a PostgreSQL relational database. 
 
 # Building
 To build the server:
@@ -42,7 +42,7 @@ To build everything:
 // +build integration
 
 ### Set the env var to find the .env.test
-> export ENV_TEST_PATH="/Users/dev/go/src/translator/.env.test"
+> export ENV_TEST_PATH="/Users/dev/go/src/verdure-admin/.env.test"
 
 ### Setup different db for your integration tests
 > export DB_LINK="test/aws/secret"

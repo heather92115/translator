@@ -2,8 +2,8 @@ package srv
 
 import (
 	"fmt"
-	"github.com/heather92115/translator/internal/db/mock"
-	"github.com/heather92115/translator/internal/mdl"
+	"github.com/heather92115/verdure-admin/internal/db/mock"
+	"github.com/heather92115/verdure-admin/internal/mdl"
 	"testing"
 	"time"
 )

@@ -14,7 +14,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
-	"github.com/heather92115/translator/graph/model"
+	"github.com/heather92115/verdure-admin/graph/model"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -577,7 +577,7 @@ func (ec *executionContext) field_Mutation_createFixit_args(ctx context.Context,
 	var arg0 model.NewFixit
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNNewFixit2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐNewFixit(ctx, tmp)
+		arg0, err = ec.unmarshalNNewFixit2githubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐNewFixit(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -592,7 +592,7 @@ func (ec *executionContext) field_Mutation_createVocab_args(ctx context.Context,
 	var arg0 model.NewVocab
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNNewVocab2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐNewVocab(ctx, tmp)
+		arg0, err = ec.unmarshalNNewVocab2githubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐNewVocab(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -607,7 +607,7 @@ func (ec *executionContext) field_Mutation_updateFixit_args(ctx context.Context,
 	var arg0 model.UpdateFixit
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNUpdateFixit2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐUpdateFixit(ctx, tmp)
+		arg0, err = ec.unmarshalNUpdateFixit2githubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐUpdateFixit(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -622,7 +622,7 @@ func (ec *executionContext) field_Mutation_updateVocab_args(ctx context.Context,
 	var arg0 model.UpdateVocab
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNUpdateVocab2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐUpdateVocab(ctx, tmp)
+		arg0, err = ec.unmarshalNUpdateVocab2githubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐUpdateVocab(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -733,7 +733,7 @@ func (ec *executionContext) field_Query_fixits_args(ctx context.Context, rawArgs
 	var arg0 model.Status
 	if tmp, ok := rawArgs["status"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-		arg0, err = ec.unmarshalNStatus2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐStatus(ctx, tmp)
+		arg0, err = ec.unmarshalNStatus2githubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐStatus(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1376,7 +1376,7 @@ func (ec *executionContext) _Fixit_status(ctx context.Context, field graphql.Col
 	}
 	res := resTmp.(model.Status)
 	fc.Result = res
-	return ec.marshalNStatus2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐStatus(ctx, field.Selections, res)
+	return ec.marshalNStatus2githubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Fixit_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1596,7 +1596,7 @@ func (ec *executionContext) _Mutation_createVocab(ctx context.Context, field gra
 	}
 	res := resTmp.(*model.Vocab)
 	fc.Result = res
-	return ec.marshalNVocab2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐVocab(ctx, field.Selections, res)
+	return ec.marshalNVocab2ᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐVocab(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createVocab(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1675,7 +1675,7 @@ func (ec *executionContext) _Mutation_updateVocab(ctx context.Context, field gra
 	}
 	res := resTmp.(*model.Vocab)
 	fc.Result = res
-	return ec.marshalNVocab2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐVocab(ctx, field.Selections, res)
+	return ec.marshalNVocab2ᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐVocab(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateVocab(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1754,7 +1754,7 @@ func (ec *executionContext) _Mutation_createFixit(ctx context.Context, field gra
 	}
 	res := resTmp.(*model.Fixit)
 	fc.Result = res
-	return ec.marshalNFixit2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐFixit(ctx, field.Selections, res)
+	return ec.marshalNFixit2ᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐFixit(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createFixit(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1825,7 +1825,7 @@ func (ec *executionContext) _Mutation_updateFixit(ctx context.Context, field gra
 	}
 	res := resTmp.(*model.Fixit)
 	fc.Result = res
-	return ec.marshalNFixit2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐFixit(ctx, field.Selections, res)
+	return ec.marshalNFixit2ᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐFixit(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateFixit(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1893,7 +1893,7 @@ func (ec *executionContext) _Query_vocab(ctx context.Context, field graphql.Coll
 	}
 	res := resTmp.(*model.Vocab)
 	fc.Result = res
-	return ec.marshalOVocab2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐVocab(ctx, field.Selections, res)
+	return ec.marshalOVocab2ᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐVocab(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_vocab(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1972,7 +1972,7 @@ func (ec *executionContext) _Query_vocabs(ctx context.Context, field graphql.Col
 	}
 	res := resTmp.([]*model.Vocab)
 	fc.Result = res
-	return ec.marshalNVocab2ᚕᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐVocabᚄ(ctx, field.Selections, res)
+	return ec.marshalNVocab2ᚕᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐVocabᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_vocabs(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2048,7 +2048,7 @@ func (ec *executionContext) _Query_fixit(ctx context.Context, field graphql.Coll
 	}
 	res := resTmp.(*model.Fixit)
 	fc.Result = res
-	return ec.marshalOFixit2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐFixit(ctx, field.Selections, res)
+	return ec.marshalOFixit2ᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐFixit(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_fixit(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2119,7 +2119,7 @@ func (ec *executionContext) _Query_fixits(ctx context.Context, field graphql.Col
 	}
 	res := resTmp.([]*model.Fixit)
 	fc.Result = res
-	return ec.marshalNFixit2ᚕᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐFixit(ctx, field.Selections, res)
+	return ec.marshalNFixit2ᚕᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐFixit(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_fixits(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2187,7 +2187,7 @@ func (ec *executionContext) _Query_audit(ctx context.Context, field graphql.Coll
 	}
 	res := resTmp.(*model.Audit)
 	fc.Result = res
-	return ec.marshalOAudit2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐAudit(ctx, field.Selections, res)
+	return ec.marshalOAudit2ᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐAudit(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_audit(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2262,7 +2262,7 @@ func (ec *executionContext) _Query_audits(ctx context.Context, field graphql.Col
 	}
 	res := resTmp.([]*model.Audit)
 	fc.Result = res
-	return ec.marshalNAudit2ᚕᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐAudit(ctx, field.Selections, res)
+	return ec.marshalNAudit2ᚕᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐAudit(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_audits(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4718,7 +4718,7 @@ func (ec *executionContext) unmarshalInputNewFixit(ctx context.Context, obj inte
 			it.VocabID = data
 		case "status":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-			data, err := ec.unmarshalNStatus2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐStatus(ctx, v)
+			data, err := ec.unmarshalNStatus2githubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐStatus(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4856,7 +4856,7 @@ func (ec *executionContext) unmarshalInputUpdateFixit(ctx context.Context, obj i
 			it.ID = data
 		case "status":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-			data, err := ec.unmarshalNStatus2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐStatus(ctx, v)
+			data, err := ec.unmarshalNStatus2githubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐStatus(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -5771,7 +5771,7 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNAudit2ᚕᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐAudit(ctx context.Context, sel ast.SelectionSet, v []*model.Audit) graphql.Marshaler {
+func (ec *executionContext) marshalNAudit2ᚕᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐAudit(ctx context.Context, sel ast.SelectionSet, v []*model.Audit) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -5795,7 +5795,7 @@ func (ec *executionContext) marshalNAudit2ᚕᚖgithubᚗcomᚋheather92115ᚋtr
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOAudit2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐAudit(ctx, sel, v[i])
+			ret[i] = ec.marshalOAudit2ᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐAudit(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -5839,11 +5839,11 @@ func (ec *executionContext) marshalNDateTime2string(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) marshalNFixit2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐFixit(ctx context.Context, sel ast.SelectionSet, v model.Fixit) graphql.Marshaler {
+func (ec *executionContext) marshalNFixit2githubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐFixit(ctx context.Context, sel ast.SelectionSet, v model.Fixit) graphql.Marshaler {
 	return ec._Fixit(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNFixit2ᚕᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐFixit(ctx context.Context, sel ast.SelectionSet, v []*model.Fixit) graphql.Marshaler {
+func (ec *executionContext) marshalNFixit2ᚕᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐFixit(ctx context.Context, sel ast.SelectionSet, v []*model.Fixit) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -5867,7 +5867,7 @@ func (ec *executionContext) marshalNFixit2ᚕᚖgithubᚗcomᚋheather92115ᚋtr
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOFixit2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐFixit(ctx, sel, v[i])
+			ret[i] = ec.marshalOFixit2ᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐFixit(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -5881,7 +5881,7 @@ func (ec *executionContext) marshalNFixit2ᚕᚖgithubᚗcomᚋheather92115ᚋtr
 	return ret
 }
 
-func (ec *executionContext) marshalNFixit2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐFixit(ctx context.Context, sel ast.SelectionSet, v *model.Fixit) graphql.Marshaler {
+func (ec *executionContext) marshalNFixit2ᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐFixit(ctx context.Context, sel ast.SelectionSet, v *model.Fixit) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -5921,23 +5921,23 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) unmarshalNNewFixit2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐNewFixit(ctx context.Context, v interface{}) (model.NewFixit, error) {
+func (ec *executionContext) unmarshalNNewFixit2githubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐNewFixit(ctx context.Context, v interface{}) (model.NewFixit, error) {
 	res, err := ec.unmarshalInputNewFixit(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNNewVocab2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐNewVocab(ctx context.Context, v interface{}) (model.NewVocab, error) {
+func (ec *executionContext) unmarshalNNewVocab2githubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐNewVocab(ctx context.Context, v interface{}) (model.NewVocab, error) {
 	res, err := ec.unmarshalInputNewVocab(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNStatus2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐStatus(ctx context.Context, v interface{}) (model.Status, error) {
+func (ec *executionContext) unmarshalNStatus2githubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐStatus(ctx context.Context, v interface{}) (model.Status, error) {
 	var res model.Status
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNStatus2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐStatus(ctx context.Context, sel ast.SelectionSet, v model.Status) graphql.Marshaler {
+func (ec *executionContext) marshalNStatus2githubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐStatus(ctx context.Context, sel ast.SelectionSet, v model.Status) graphql.Marshaler {
 	return v
 }
 
@@ -5956,21 +5956,21 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) unmarshalNUpdateFixit2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐUpdateFixit(ctx context.Context, v interface{}) (model.UpdateFixit, error) {
+func (ec *executionContext) unmarshalNUpdateFixit2githubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐUpdateFixit(ctx context.Context, v interface{}) (model.UpdateFixit, error) {
 	res, err := ec.unmarshalInputUpdateFixit(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpdateVocab2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐUpdateVocab(ctx context.Context, v interface{}) (model.UpdateVocab, error) {
+func (ec *executionContext) unmarshalNUpdateVocab2githubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐUpdateVocab(ctx context.Context, v interface{}) (model.UpdateVocab, error) {
 	res, err := ec.unmarshalInputUpdateVocab(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNVocab2githubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐVocab(ctx context.Context, sel ast.SelectionSet, v model.Vocab) graphql.Marshaler {
+func (ec *executionContext) marshalNVocab2githubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐVocab(ctx context.Context, sel ast.SelectionSet, v model.Vocab) graphql.Marshaler {
 	return ec._Vocab(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNVocab2ᚕᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐVocabᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Vocab) graphql.Marshaler {
+func (ec *executionContext) marshalNVocab2ᚕᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐVocabᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Vocab) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -5994,7 +5994,7 @@ func (ec *executionContext) marshalNVocab2ᚕᚖgithubᚗcomᚋheather92115ᚋtr
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNVocab2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐVocab(ctx, sel, v[i])
+			ret[i] = ec.marshalNVocab2ᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐVocab(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -6014,7 +6014,7 @@ func (ec *executionContext) marshalNVocab2ᚕᚖgithubᚗcomᚋheather92115ᚋtr
 	return ret
 }
 
-func (ec *executionContext) marshalNVocab2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐVocab(ctx context.Context, sel ast.SelectionSet, v *model.Vocab) graphql.Marshaler {
+func (ec *executionContext) marshalNVocab2ᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐVocab(ctx context.Context, sel ast.SelectionSet, v *model.Vocab) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -6277,7 +6277,7 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) marshalOAudit2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐAudit(ctx context.Context, sel ast.SelectionSet, v *model.Audit) graphql.Marshaler {
+func (ec *executionContext) marshalOAudit2ᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐAudit(ctx context.Context, sel ast.SelectionSet, v *model.Audit) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -6310,7 +6310,7 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) marshalOFixit2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐFixit(ctx context.Context, sel ast.SelectionSet, v *model.Fixit) graphql.Marshaler {
+func (ec *executionContext) marshalOFixit2ᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐFixit(ctx context.Context, sel ast.SelectionSet, v *model.Fixit) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -6349,7 +6349,7 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) marshalOVocab2ᚖgithubᚗcomᚋheather92115ᚋtranslatorᚋgraphᚋmodelᚐVocab(ctx context.Context, sel ast.SelectionSet, v *model.Vocab) graphql.Marshaler {
+func (ec *executionContext) marshalOVocab2ᚖgithubᚗcomᚋheather92115ᚋverdureᚑadminᚋgraphᚋmodelᚐVocab(ctx context.Context, sel ast.SelectionSet, v *model.Vocab) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

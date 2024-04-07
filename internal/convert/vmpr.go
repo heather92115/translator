@@ -2,8 +2,8 @@ package convert
 
 import (
 	"fmt"
-	"github.com/heather92115/translator/graph/model"
-	"github.com/heather92115/translator/internal/mdl"
+	"github.com/heather92115/verdure-admin/graph/model"
+	"github.com/heather92115/verdure-admin/internal/mdl"
 	"strconv"
 )
 
